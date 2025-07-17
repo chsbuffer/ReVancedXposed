@@ -15,6 +15,7 @@ import io.github.chsbuffer.revancedxposed.meta.MetaHook
 import io.github.chsbuffer.revancedxposed.music.MusicHook
 import io.github.chsbuffer.revancedxposed.reddit.RedditHook
 import io.github.chsbuffer.revancedxposed.spotify.SpotifyHook
+import io.github.chsbuffer.revancedxposed.twitch.TwitchHook
 import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 
 class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
@@ -29,7 +30,8 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         "com.reddit.frontpage" to { RedditHook(app, lpparam) },
         "com.google.android.apps.photos" to { GooglePhotosHook(lpparam) },
         "com.instagram.android" to { MetaHook(app, lpparam) },
-        "com.instagram.barcelona" to { MetaHook(app, lpparam) })
+        "com.instagram.barcelona" to { MetaHook(app, lpparam) },
+        "tv.twitch.android.app" to { TwitchHook(app, lpparam) })
 
     fun shouldHook(packageName: String): Boolean {
         if (!hooksByPackage.containsKey(packageName)) return false

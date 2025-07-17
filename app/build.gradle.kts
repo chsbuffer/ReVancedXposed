@@ -95,7 +95,8 @@ android {
                 srcDirs(
                     "../revanced-patches/extensions/shared/library/src/main/java",
                     "../revanced-patches/extensions/youtube/src/main/java",
-                    "../revanced-patches/extensions/spotify/src/main/java"
+                    "../revanced-patches/extensions/spotify/src/main/java",
+                    "../revanced-patches/extensions/twitch/src/main/java"
                 )
             }
         }
@@ -110,6 +111,8 @@ dependencies {
     implementation(libs.fuel)
     compileOnly(libs.xposed)
     compileOnly(project(":stub"))
+    compileOnly(libs.retrofit)
+    compileOnly(libs.appcompat)
 }
 
 abstract class GenerateStringsTask @Inject constructor(

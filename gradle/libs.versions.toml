@@ -7,6 +7,8 @@ annotation = "1.9.1"
 gson = "2.13.1"
 kotlinxCoroutinesAndroid = "1.10.2"
 fuel = "3.0.0-alpha04"
+retrofit = "2.11.0"
+appcompat = "1.7.0"
 
 [libraries]
 dexkit = { group = "org.luckypray", name = "dexkit", version.ref = "dexkit" }
@@ -15,6 +17,8 @@ annotation = { group = "androidx.annotation", name = "annotation", version.ref =
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 fuel = { group = "com.github.kittinunf.fuel", name = "fuel", version.ref = "fuel" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

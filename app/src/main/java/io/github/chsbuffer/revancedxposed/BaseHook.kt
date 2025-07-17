@@ -17,6 +17,7 @@ import org.luckypray.dexkit.result.MethodData
 import org.luckypray.dexkit.wrap.DexClass
 import org.luckypray.dexkit.wrap.DexField
 import org.luckypray.dexkit.wrap.DexMethod
+import java.lang.reflect.Member
 import kotlin.reflect.KFunction0
 import kotlin.system.measureTimeMillis
 
@@ -28,6 +29,9 @@ interface IHook {
 
     fun DexMethod.hookMethod(callback: XC_MethodHook) {
         XposedBridge.hookMethod(toMember(), callback)    }
+
+    fun Member.hookMethod(callback: XC_MethodHook) {
+        XposedBridge.hookMethod(this, callback)    }
 
     fun DexClass.toClass() = getInstance(classLoader)
     fun DexMethod.toMethod() = getMethodInstance(classLoader)
