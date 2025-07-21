@@ -13,7 +13,8 @@ import java.util.Collections
 class StravaHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
     BaseHook(app, lpparam) {
     override val hooks = arrayOf(
-        ::UnlockSubscription, ::DisableSubscriptionSuggestions
+        ::UnlockSubscription,
+        ::DisableSubscriptionSuggestions
     )
 
     fun UnlockSubscription() {
@@ -21,7 +22,7 @@ class StravaHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
             findMethod {
                 matcher {
                     name = "getSubscribed"
-                    declaredClass("SubscriptionDetailResponse", StringMatchType.EndsWith)
+                    declaredClass(".SubscriptionDetailResponse", StringMatchType.EndsWith)
                     opcodes(
                         Opcode.IGET_BOOLEAN,
                     )
@@ -29,7 +30,7 @@ class StravaHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
             }.single()
         }.hookMethod(object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                param.setResult(true)
+                param.result = true
             }
         })
     }
@@ -39,7 +40,7 @@ class StravaHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
             findMethod {
                 matcher {
                     name = "getModules"
-                    declaredClass("GenericLayoutEntry", StringMatchType.EndsWith)
+                    declaredClass(".GenericLayoutEntry", StringMatchType.EndsWith)
                     opcodes(
                         Opcode.IGET_OBJECT,
                     )
@@ -47,12 +48,10 @@ class StravaHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
             }.single()
         }.hookMethod(object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val pageValue = param.thisObject.getObjectFieldOrNullAs<String>("page")
-
-                if (pageValue?.contains("_upsell") == true || pageValue?.contains("promo") == true) {
-                    param.setResult(Collections.EMPTY_LIST)
+                val pageValue = param.thisObject.getObjectFieldOrNullAs<String>("page") ?: return
+                if (pageValue.contains("_upsell") || pageValue.contains("promo")) {
+                    param.result = Collections.EMPTY_LIST
                 }
-
             }
         })
     }
