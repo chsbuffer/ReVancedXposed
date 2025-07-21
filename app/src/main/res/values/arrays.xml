@@ -7,5 +7,6 @@
         <item>com.google.android.apps.photos</item>
         <item>com.instagram.android</item>
         <item>com.instagram.barcelona</item>
+        <item>com.strava</item>
     </string-array>
 </resources>
