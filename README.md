@@ -11,6 +11,12 @@
 >[!IMPORTANT]  
 > This is not an official ReVanced project, do not ask the ReVanced developers for help.
 
+## Downloads
+- **Release build**: [Download](https://github.com/chsbuffer/ReVancedXposed/releases/latest)
+- **Nightly build**: [Download](https://nightly.link/chsbuffer/ReVancedXposed/workflows/android/main)
+
+<sub>If you've joined the YouTube beta program, please try the nightly build before reporting an issue.</sub>
+
 ## Patches
 
 ### Youtube
