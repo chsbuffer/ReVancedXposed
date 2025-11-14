@@ -3,6 +3,7 @@ package io.github.chsbuffer.revancedxposed.shared.misc.debugging
 import app.revanced.extension.shared.patches.EnableDebuggingPatch
 import app.revanced.extension.shared.settings.preference.ClearLogBufferPreference
 import app.revanced.extension.shared.settings.preference.ExportLogToClipboardPreference
+import app.revanced.extension.shared.settings.preference.FeatureFlagsManagerPreference
 import io.github.chsbuffer.revancedxposed.BaseHook
 import io.github.chsbuffer.revancedxposed.hookMethod
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.BasePreference
@@ -34,6 +35,11 @@ fun BaseHook.EnableDebugging(
             NonInteractivePreference(
                 "revanced_debug_logs_clear_buffer",
                 tag = ClearLogBufferPreference::class.java,
+                selectable = true
+            ),
+            NonInteractivePreference(
+                "revanced_debug_feature_flags_manager",
+                tag = FeatureFlagsManagerPreference::class.java,
                 selectable = true
             )
         )
