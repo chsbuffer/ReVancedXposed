@@ -2,6 +2,7 @@ package io.github.chsbuffer.revancedxposed.youtube.layout.sponsorblock
 
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.os.Build
 import android.view.ViewGroup
 import app.revanced.extension.shared.Utils
 import app.revanced.extension.youtube.sponsorblock.SegmentPlaybackController
@@ -81,6 +82,11 @@ fun YoutubeHook.SponsorBlock() {
             SegmentPlaybackController.setSponsorBarRect(sponsorBarRectField.get(param.thisObject) as Rect)
         }
     }
+    val drawCircle =
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+            "Landroid/view/DisplayListCanvas;->drawCircle(FFFLandroid/graphics/Paint;)V"
+        else
+            "Landroid/graphics/RecordingCanvas;->drawCircle(FFFLandroid/graphics/Paint;)V"
     ::seekbarOnDrawFingerprint.hookMethod(
         scopedHook(
             // Set the thickness of the segment.
@@ -93,7 +99,7 @@ fun YoutubeHook.SponsorBlock() {
                 }
             },
             // Find the drawCircle call and draw the segment before it.
-            DexMethod("Landroid/graphics/RecordingCanvas;->drawCircle(FFFLandroid/graphics/Paint;)V").toMethod() to {
+            DexMethod(drawCircle).toMethod() to {
                 before { param ->
                     SegmentPlaybackController.drawSponsorTimeBars(
                         param.thisObject as Canvas, param.args[1] as Float
@@ -141,7 +147,7 @@ fun YoutubeHook.SponsorBlock() {
         }
     })
 
-    ::adProgressTextViewVisibilityFingerprint.hookMethod(scopedHook(::AdProgressTextVisibility.method){
+    ::adProgressTextViewVisibilityFingerprint.hookMethod(scopedHook(::AdProgressTextVisibility.method) {
         before {
             SegmentPlaybackController.setAdProgressTextVisibility(it.args[0] as Int)
         }
