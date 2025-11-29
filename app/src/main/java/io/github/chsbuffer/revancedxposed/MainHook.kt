@@ -15,7 +15,6 @@ import io.github.chsbuffer.revancedxposed.meta.MetaHook
 import io.github.chsbuffer.revancedxposed.music.MusicHook
 import io.github.chsbuffer.revancedxposed.photomath.PhotomathHook
 import io.github.chsbuffer.revancedxposed.reddit.RedditHook
-import io.github.chsbuffer.revancedxposed.spotify.SpotifyHook
 import io.github.chsbuffer.revancedxposed.strava.StravaHook
 import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 
@@ -27,7 +26,6 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
     val hooksByPackage = mapOf(
         "com.google.android.apps.youtube.music" to { MusicHook(app, lpparam) },
         "com.google.android.youtube" to { YoutubeHook(app, lpparam) },
-        "com.spotify.music" to { SpotifyHook(app, lpparam) },
         "com.reddit.frontpage" to { RedditHook(app, lpparam) },
         "com.google.android.apps.photos" to { GooglePhotosHook(lpparam) },
         "com.instagram.android" to { MetaHook(app, lpparam) },

@@ -13,8 +13,7 @@ android {
             java {
                 srcDirs(
                     "../revanced-patches/patches/stub/src/main/java",
-                    "../revanced-patches/extensions/youtube/stub/src/main/java",
-                    "../revanced-patches/extensions/spotify/stub/src/main/java"
+                    "../revanced-patches/extensions/youtube/stub/src/main/java"
                 )
             }
         }

@@ -38,11 +38,6 @@
 - Hide video action buttons
 - Disable resuming Shorts on startup
 
-### Spotify
-- Unlock Spotify Premium
-- Sanitize sharing links
-- Hide Create button
-
 ### Google Photos
 - Spoof Pixel XL
 
