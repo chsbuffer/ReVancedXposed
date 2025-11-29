@@ -45,6 +45,7 @@ class GooglePhotosHook(val lpparam: LoadPackageParam) : IHook {
             "com.google.android.feature.PIXEL_2024_MIDYEAR_EXPERIENCE",
             "com.google.android.feature.PIXEL_2024_EXPERIENCE",
             "com.google.android.feature.PIXEL_2025_MIDYEAR_EXPERIENCE",
+            "com.google.android.feature.PIXEL_2025_EXPERIENCE",
         )
 
         val hook = object : XC_MethodHook() {
