@@ -26,17 +26,16 @@ internal val kidsBackgroundPlaybackPolicyControllerFingerprint = fingerprint {
     returns("V")
     parameters("I", "L", "Z")
     opcodes(
-        Opcode.IGET,
-        Opcode.IF_NE,
-        Opcode.IGET_OBJECT,
-        Opcode.IF_NE,
-        Opcode.IGET_BOOLEAN,
-        Opcode.IF_EQ,
-        Opcode.GOTO,
-        Opcode.RETURN_VOID,
         Opcode.SGET_OBJECT,
         Opcode.CONST_4,
         Opcode.IF_NE,
         Opcode.IPUT_BOOLEAN,
+        Opcode.IGET_OBJECT,
+        Opcode.IF_EQZ,
+        Opcode.IGET,
+        Opcode.INVOKE_STATIC,
+        Opcode.MOVE_RESULT,
+        Opcode.IF_NEZ,
+        Opcode.GOTO_16,
     )
 }
