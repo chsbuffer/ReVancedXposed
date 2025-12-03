@@ -54,10 +54,14 @@ jobs:
 
     - name: Create AutoBuild Release
       run: |
+        LATEST_REL=$(gh release view --json tagName -q .tagName)
         GIT_DESCRIBE=$(git rev-parse --short HEAD)
         cd app/build/outputs/apk/universal/release/
         mv app-universal-release.apk ReVancedXposed-${GIT_DESCRIBE}.apk
         gh release delete autobuild --yes || true
-        gh release create autobuild ReVancedXposed-${GIT_DESCRIBE}.apk --prerelease --title "AutoBuild ${GIT_DESCRIBE}"
+        gh release create autobuild ReVancedXposed-${GIT_DESCRIBE}.apk \
+          --prerelease \
+          --title "Nightly Build ${GIT_DESCRIBE}" \
+          --notes "Nightly build from commit ${GIT_DESCRIBE}. See changes: https://github.com/${{ github.repository }}/compare/${LATEST_REL}...main"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

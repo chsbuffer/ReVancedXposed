@@ -38,6 +38,10 @@
 - Hide video action buttons
 - Disable resuming Shorts on startup
 
+### Spotify (Moved to Dedicated Repository)
+
+[ReVancedXposed_Spotify](https://github.com/chsbuffer/ReVancedXposed_Spotify)
+
 ### Google Photos
 - Spoof Pixel XL
 
