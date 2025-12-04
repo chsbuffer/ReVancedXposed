@@ -4,7 +4,6 @@ import app.revanced.extension.youtube.patches.components.Filter
 import app.revanced.extension.youtube.patches.components.LithoFilterPatch
 import de.robv.android.xposed.XC_MethodReplacement.returnConstant
 import io.github.chsbuffer.revancedxposed.new
-import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import java.nio.ByteBuffer
 
@@ -70,9 +69,12 @@ fun YoutubeHook.LithoFilter() {
     // Turn off a feature flag that enables native code of protobuf parsing (Upb protobuf).
     // If this is enabled, then the litho protobuffer hook will always show an empty buffer
     // since it's no longer handled by the hooked Java code.
-    ::lithoConverterBufferUpbFeatureFlagFingerprint.hookMethod(scopedHook(::featureFlagCheck.member) {
-        before { it.result = false }
-    })
+    ::featureFlagCheck.hookMethod {
+        before {
+            if (it.args[0] == 45419603L)
+                it.result = false
+        }
+    }
 
     // endregion
 }
