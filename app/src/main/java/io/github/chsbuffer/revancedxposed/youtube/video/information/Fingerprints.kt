@@ -10,7 +10,10 @@ import io.github.chsbuffer.revancedxposed.fingerprint
 import io.github.chsbuffer.revancedxposed.youtube.shared.videoQualityChangedFingerprint
 import org.luckypray.dexkit.query.enums.OpCodeMatchType
 import org.luckypray.dexkit.query.enums.UsingType
+import org.luckypray.dexkit.result.ClassData
+import org.luckypray.dexkit.result.FieldData
 import org.luckypray.dexkit.result.FieldUsingType
+import org.luckypray.dexkit.result.MethodData
 
 @get:SkipTest
 val createVideoPlayerSeekbarFingerprint = fingerprint {
@@ -34,25 +37,35 @@ val onPlaybackSpeedItemClickFingerprint = fingerprint {
     }
 }
 
+private fun findFieldUsedByType(method: MethodData, fieldType: ClassData): FieldData {
+    val fields = method.usingFields.distinct()
+    fields.singleOrNull {
+        it.field.typeName == fieldType.name
+    }?.let { return it.field }
+
+    val interfaceNames = fieldType.interfaces.map { it.name }.toSet()
+    return fields.single {
+        it.field.typeName in interfaceNames
+    }.field
+}
+
 val setPlaybackSpeedMethodReference = findMethodDirect {
     onPlaybackSpeedItemClickFingerprint().invokes.findMethod { matcher { paramTypes("float") } }
         .single()
 }
 
-val setPlaybackSpeedClass = findClassDirect {
-    setPlaybackSpeedMethodReference().declaredClass!!
-}
+val setPlaybackSpeedClass = findClassDirect { setPlaybackSpeedMethodReference().declaredClass!! }
 
 val setPlaybackSpeedClassFieldReference = findFieldDirect {
-    val setPlaybackSpeedClassName = setPlaybackSpeedClass().name
-    onPlaybackSpeedItemClickFingerprint().usingFields.distinct()
-        .single { it.field.typeName == setPlaybackSpeedClassName }.field
+    findFieldUsedByType(
+        onPlaybackSpeedItemClickFingerprint(), setPlaybackSpeedClass()
+    )
 }
 
 val setPlaybackSpeedContainerClassFieldReference = findFieldDirect {
-    val setPlaybackSpeedContainerClassName = setPlaybackSpeedClassFieldReference().declaredClassName
-    onPlaybackSpeedItemClickFingerprint().usingFields.distinct()
-        .single { it.field.typeName == setPlaybackSpeedContainerClassName }.field
+    findFieldUsedByType(
+        onPlaybackSpeedItemClickFingerprint(), setPlaybackSpeedClassFieldReference().declaredClass
+    )
 }
 
 val playerControllerSetTimeReferenceFingerprint = fingerprint {
@@ -200,8 +213,7 @@ private val videoQualityFingerprint = fingerprint {
     parameters(
         "I", // Resolution.
         "Ljava/lang/String;", // Human readable resolution: "480p", "1080p Premium", etc
-        "Z",
-        "L"
+        "Z", "L"
     )
 //    custom { _, classDef ->
 //        classDef.type == YOUTUBE_VIDEO_QUALITY_CLASS_TYPE
