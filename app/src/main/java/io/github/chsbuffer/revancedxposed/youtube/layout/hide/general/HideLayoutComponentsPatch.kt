@@ -15,12 +15,14 @@ import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.Prefer
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.TextPreference
 import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
+import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.LithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.addLithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.emptyComponentClass
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import org.luckypray.dexkit.wrap.DexMethod
 
 fun YoutubeHook.HideLayoutComponents() {
+    dependsOn(::LithoFilter)
 
     PreferenceScreen.PLAYER.addPreferences(
         PreferenceScreenPreference(

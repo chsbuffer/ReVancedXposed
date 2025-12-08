@@ -37,6 +37,7 @@
 - Hide layout components
 - Hide video action buttons
 - Disable resuming Shorts on startup
+- Disable video codecs
 
 ### Spotify (Moved to Dedicated Repository)
 

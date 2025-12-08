@@ -25,6 +25,7 @@ import io.github.chsbuffer.revancedxposed.youtube.misc.privacy.SanitizeSharingLi
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.SettingsHook
 import io.github.chsbuffer.revancedxposed.youtube.shared.YOUTUBE_MAIN_ACTIVITY_CLASS_TYPE
 import io.github.chsbuffer.revancedxposed.youtube.video.audio.ForceOriginalAudio
+import io.github.chsbuffer.revancedxposed.youtube.video.codecs.DisableVideoCodecs
 import io.github.chsbuffer.revancedxposed.youtube.video.quality.VideoQuality
 import io.github.chsbuffer.revancedxposed.youtube.video.speed.PlaybackSpeed
 import org.luckypray.dexkit.wrap.DexMethod
@@ -53,6 +54,7 @@ class YoutubeHook(
         ::PlaybackSpeed,
         ::EnableDebugging,
         ::ForceOriginalAudio,
+        ::DisableVideoCodecs,
         ::CheckRecycleBitmapMediaSession,
         // make sure settingsHook at end to build preferences
         ::SettingsHook
