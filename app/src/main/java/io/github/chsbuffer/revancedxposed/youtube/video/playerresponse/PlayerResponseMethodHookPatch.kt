@@ -1,6 +1,6 @@
 package io.github.chsbuffer.revancedxposed.youtube.video.playerresponse
 
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
+import io.github.chsbuffer.revancedxposed.patch
 
 val playerResponseBeforeVideoIdHooks: MutableList<(protobuf: String, videoId: String, isShortAndOpeningOrPlaying: Boolean) -> String> =
     mutableListOf()
@@ -30,7 +30,7 @@ val playerResponseVideoIdHooks: MutableList<(videoId: String, isShortAndOpeningO
 val playerResponseAfterVideoIdHooks: MutableList<(protobuf: String, videoId: String, isShortAndOpeningOrPlaying: Boolean) -> String> =
     mutableListOf()
 
-fun YoutubeHook.PlayerResponseMethodHook() {
+val PlayerResponseMethodHook = patch {
     val PARAMETER_VIDEO_ID = 0
     val PARAMETER_PROTO_BUFFER = 2
     var parameterIsShortAndOpeningOrPlaying = -1

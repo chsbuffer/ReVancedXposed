@@ -26,11 +26,13 @@ import org.luckypray.dexkit.wrap.DexMethod
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
-import kotlin.reflect.KFunction0
 import kotlin.reflect.KProperty0
 import kotlin.system.measureTimeMillis
 
-private typealias HookFunction = KFunction0<Unit>
+fun patch(name: String = "", description: String = "", func: BaseHook.() -> Unit) =
+    Patch(name, description, func)
+
+class Patch(val name: String, val description: String, val run: BaseHook.() -> Unit)
 
 interface IHook {
     val classLoader: ClassLoader
@@ -91,7 +93,8 @@ class SharedPrefCache(app: Application) : DexKitCacheBridge.Cache {
 
     override fun getList(
         key: String, default: List<String>?
-    ): List<String>? = map.getOrDefault(key, null)?.takeIf(String::isNotBlank)?.split('|') ?: default
+    ): List<String>? =
+        map.getOrDefault(key, null)?.takeIf(String::isNotBlank)?.split('|') ?: default
 
     override fun put(key: String, value: String) {
         map.put(key, value)
@@ -122,10 +125,9 @@ class DependedHookFailedException(
 abstract class BaseHook(private val app: Application, val lpparam: LoadPackageParam) : IHook {
     override val classLoader = lpparam.classLoader!!
 
-    // hooks
-    abstract val hooks: Array<HookFunction>
-    private val appliedHooks = mutableSetOf<HookFunction>()
-    private val failedHooks = mutableListOf<HookFunction>()
+    abstract val patches: Array<Patch>
+    private val appliedPatches = mutableSetOf<Patch>()
+    private val failedPatches = mutableListOf<Patch>()
 
     // cache
     private val moduleRel = BuildConfig.COMMIT_HASH
@@ -172,32 +174,32 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
     }
 
     private fun applyHooks() {
-        hooks.forEach { hook ->
-            if (appliedHooks.contains(hook)) return@forEach
-            runCatching(hook).onFailure { err ->
+        patches.forEach { hook ->
+            if (appliedPatches.contains(hook)) return@forEach
+            runCatching { hook.run(this) }.onFailure { err ->
                 XposedBridge.log(err)
-                failedHooks.add(hook)
+                failedPatches.add(hook)
             }.onSuccess {
-                appliedHooks.add(hook)
+                appliedPatches.add(hook)
             }
         }
     }
 
     private fun handleResult() {
         cache.saveCache()
-        val success = failedHooks.isEmpty()
+        val success = failedPatches.isEmpty()
         if (!success) {
             XposedBridge.log("${lpparam.appInfo.packageName} version: ${getAppVersion()}")
-            Utils.showToastLong("Error while apply following Hooks:\n${failedHooks.joinToString { it.name }}")
+            Utils.showToastLong("Error while apply following patches:\n${failedPatches.joinToString { it.name }}")
         }
     }
 
     private fun logDebugInfo() {
-        val success = failedHooks.isEmpty()
+        val success = failedPatches.isEmpty()
         if (DEBUG) {
             XposedBridge.log("${lpparam.appInfo.packageName} version: ${getAppVersion()}")
             if (success) {
-                Utils.showToastLong("apply hooks success")
+                Utils.showToastLong("apply patches success")
             }
         }
     }
@@ -213,18 +215,18 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
         return "$versionName ($versionCode)"
     }
 
-    fun dependsOn(vararg hooks: HookFunction) {
-        hooks.forEach { hook ->
-            if (appliedHooks.contains(hook)) return@forEach
-            runCatching(hook).onFailure { err ->
+    fun dependsOn(vararg patches: Patch) {
+        patches.forEach { hook ->
+            if (appliedPatches.contains(hook)) return@forEach
+            runCatching { (hook.run(this)) }.onFailure { err ->
                 throw DependedHookFailedException(hook.name, err)
             }.onSuccess {
-                appliedHooks.add(hook)
+                appliedPatches.add(hook)
             }
         }
     }
 
-    fun ExtensionResourceHook() {
+    val ExtensionResourceHook = patch {
         app.addModuleAssets()
         StringRef.resources = app.resources
         StringRef.packageName = BuildConfig.APPLICATION_ID

@@ -7,9 +7,10 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import app.revanced.extension.shared.Utils
 import app.revanced.extension.youtube.patches.PlayerControlsPatch
+import io.github.chsbuffer.revancedxposed.BaseHook
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import org.luckypray.dexkit.wrap.DexMethod
 
 class ControlInitializer(
@@ -72,10 +73,13 @@ private fun onTopContainerInflate(viewStub: ViewStub, root: ViewGroup) {
     )
 
     val revancedSbCreateSegmentButton =
-        Utils.getChildViewByResourceName<View>(root, "revanced_sb_create_segment_button")
-    (revancedSbCreateSegmentButton.layoutParams as RelativeLayout.LayoutParams).addRule(
-        RelativeLayout.START_OF, Utils.getResourceIdentifier("music_app_deeplink_button", "id")
-    )
+        Utils.getChildViewByResourceName<View?>(root, "revanced_sb_create_segment_button")
+
+    if (revancedSbCreateSegmentButton != null) {
+        (revancedSbCreateSegmentButton.layoutParams as RelativeLayout.LayoutParams).addRule(
+            RelativeLayout.START_OF, Utils.getResourceIdentifier("music_app_deeplink_button", "id")
+        )
+    }
 
     topControls.forEach { control ->
         control.initializeButton(root)
@@ -91,7 +95,9 @@ private fun onBottomContainerInflate(viewStub: ViewStub, root: ViewGroup) {
     }
 }
 
-fun YoutubeHook.PlayerControls() {
+val PlayerControls = patch(
+    description = "Manages the code for the player controls of the YouTube player.",
+) {
     DexMethod("Landroid/view/ViewStub;->inflate()Landroid/view/View;").hookMethod {
         after {
             val viewStub = it.thisObject as ViewStub
@@ -142,7 +148,7 @@ fun YoutubeHook.PlayerControls() {
     }
 }
 
-private fun YoutubeHook.initInjectVisibilityCheckCall() {
+private fun BaseHook.initInjectVisibilityCheckCall() {
     ::controlsOverlayVisibilityFingerprint.hookMethod {
         before { param ->
             bottomControls.forEach {

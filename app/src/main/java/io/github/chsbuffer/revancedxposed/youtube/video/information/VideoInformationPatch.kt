@@ -8,8 +8,8 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import io.github.chsbuffer.revancedxposed.findFirstFieldByExactType
 import io.github.chsbuffer.revancedxposed.getStaticObjectField
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.video.playerresponse.PlayerResponseMethodHook
 import io.github.chsbuffer.revancedxposed.youtube.video.playerresponse.playerResponseBeforeVideoIdHooks
 import io.github.chsbuffer.revancedxposed.youtube.video.playerresponse.playerResponseVideoIdHooks
@@ -85,10 +85,12 @@ private lateinit var getResolution: (VideoQuality) -> Int
 fun VideoQuality.getResolution() = getResolution(this)
 fun VideoQuality.getQualityName() = getQualityName(this)
 
-fun YoutubeHook.VideoInformation() {
+val VideoInformationPatch = patch(
+    description = "Hooks YouTube to get information about the current playing video.",
+) {
     dependsOn(
-        ::VideoId,
-        ::PlayerResponseMethodHook,
+        VideoId,
+        PlayerResponseMethodHook,
     )
 
     //region playerController

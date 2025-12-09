@@ -1,14 +1,17 @@
 package io.github.chsbuffer.revancedxposed.youtube.layout.hide.shorts
 
 import app.revanced.extension.youtube.patches.components.ShortsFilter
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.LithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.addLithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 
-fun YoutubeHook.HideShortsComponents() {
-    dependsOn(::LithoFilter)
+val HideShortsComponents = patch(
+    name = "Hide Shorts components",
+    description = "Adds options to hide components related to Shorts.",
+) {
+    dependsOn(LithoFilter)
 
     PreferenceScreen.SHORTS.addPreferences(
         SwitchPreference("revanced_hide_shorts_home"),

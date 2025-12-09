@@ -9,6 +9,7 @@ import app.revanced.extension.youtube.settings.YouTubeActivityHook
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.hookMethod
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.BasePreferenceScreen
@@ -17,10 +18,11 @@ import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.NonInt
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.TextPreference
 import io.github.chsbuffer.revancedxposed.shared.settings.preferences
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 
 @Suppress("UNREACHABLE_CODE")
-fun YoutubeHook.SettingsHook() {
+val SettingsHook = patch(
+    description = "Adds settings for ReVanced to YouTube.",
+) {
     ::PreferenceFragmentCompat_addPreferencesFromResource.hookMethod(scopedHook(::PreferenceInflater_inflate.member) {
         before { param ->
             val context = Utils.getContext()

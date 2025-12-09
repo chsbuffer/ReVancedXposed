@@ -1,12 +1,15 @@
 package io.github.chsbuffer.revancedxposed.youtube.layout.startupshortsreset
 
 import app.revanced.extension.youtube.patches.DisableResumingStartupShortsPlayerPatch
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 
-fun YoutubeHook.DisableResumingShortsOnStartup() {
+val DisableResumingShortsOnStartup = patch(
+    name = "Disable resuming Shorts on startup",
+    description = "Adds an option to disable the Shorts player from resuming on app startup when Shorts were last being watched.",
+) {
     PreferenceScreen.SHORTS.addPreferences(
         SwitchPreference("revanced_disable_resuming_shorts_player"),
     )

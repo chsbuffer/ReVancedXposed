@@ -1,13 +1,13 @@
 package io.github.chsbuffer.revancedxposed.youtube.video.speed
 
-import io.github.chsbuffer.revancedxposed.youtube.video.speed.button.PlaybackSpeedButton
-import io.github.chsbuffer.revancedxposed.youtube.video.speed.custom.CustomPlaybackSpeed
-import io.github.chsbuffer.revancedxposed.youtube.video.speed.remember.RememberPlaybackSpeed
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.BasePreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceCategory
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference.Sorting
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
+import io.github.chsbuffer.revancedxposed.youtube.video.speed.button.PlaybackSpeedButton
+import io.github.chsbuffer.revancedxposed.youtube.video.speed.custom.CustomPlaybackSpeed
+import io.github.chsbuffer.revancedxposed.youtube.video.speed.remember.RememberPlaybackSpeed
 
 /**
  * Speed menu settings.  Used to organize all speed related settings together.
@@ -15,11 +15,15 @@ import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 internal val settingsMenuVideoSpeedGroup = mutableSetOf<BasePreference>()
 
 @Suppress("unused")
-fun YoutubeHook.PlaybackSpeed() {
+val PlaybackSpeed = patch(
+    name = "Playback speed",
+    description = "Adds options to customize available playback speeds, set a default playback speed, " +
+            "and show a speed dialog button in the video player.",
+) {
     dependsOn(
-        ::CustomPlaybackSpeed,
-        ::RememberPlaybackSpeed,
-        ::PlaybackSpeedButton,
+        CustomPlaybackSpeed,
+        RememberPlaybackSpeed,
+        PlaybackSpeedButton,
     )
 
     PreferenceScreen.VIDEO.addPreferences(

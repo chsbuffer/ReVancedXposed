@@ -5,23 +5,26 @@ import app.revanced.extension.youtube.patches.DownloadsPatch
 import app.revanced.extension.youtube.settings.preference.ExternalDownloaderPreference
 import app.revanced.extension.youtube.videoplayer.ExternalDownloadButton
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.TextPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.ControlInitializer
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.PlayerControls
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.addBottomControl
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.initializeBottomControl
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import io.github.chsbuffer.revancedxposed.youtube.shared.mainActivityOnCreateFingerprint
-import io.github.chsbuffer.revancedxposed.youtube.video.information.VideoInformation
+import io.github.chsbuffer.revancedxposed.youtube.video.information.VideoInformationPatch
 
-fun YoutubeHook.Downloads() {
-
+val Downloads = patch(
+    name = "Downloads",
+    description = "Adds support to download videos with an external downloader app " +
+            "using the in-app download button or a video player action button.",
+) {
     dependsOn(
-        ::PlayerControls,
-        ::VideoInformation,
+        PlayerControls,
+        VideoInformationPatch,
     )
 
     PreferenceScreen.PLAYER.addPreferences(

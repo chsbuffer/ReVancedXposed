@@ -9,8 +9,8 @@ import app.revanced.extension.shared.Utils
 import app.revanced.extension.youtube.shared.NavigationBar
 import io.github.chsbuffer.revancedxposed.R
 import io.github.chsbuffer.revancedxposed.enumValueOf
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.shared.mainActivityOnBackPressedFingerprint
 import org.luckypray.dexkit.wrap.DexMethod
 
@@ -21,7 +21,9 @@ fun onNavigationTabCreated(button: NavigationBar.NavigationButton, tabView: View
 val hookNavigationButtonCreated: MutableList<(NavigationBar.NavigationButton, View) -> Unit> =
     mutableListOf()
 
-fun YoutubeHook.NavigationBarHook() {
+val NavigationBarHook = patch(
+    description = "Hooks the active navigation or search bar.",
+) {
 
     // Hook the current navigation bar enum value. Note, the 'You' tab does not have an enum value.
     ::initializeButtonsFingerprint.hookMethod(scopedHook(::getNavigationEnumMethod.member) {

@@ -1,13 +1,11 @@
 package io.github.chsbuffer.revancedxposed.youtube.misc.navigation
 
 import io.github.chsbuffer.revancedxposed.AccessFlags
-import io.github.chsbuffer.revancedxposed.RequireAppVersion
 import io.github.chsbuffer.revancedxposed.accessFlags
 import io.github.chsbuffer.revancedxposed.findClassDirect
 import io.github.chsbuffer.revancedxposed.findMethodDirect
 import io.github.chsbuffer.revancedxposed.findMethodListDirect
 import io.github.chsbuffer.revancedxposed.fingerprint
-import io.github.chsbuffer.revancedxposed.literal
 import io.github.chsbuffer.revancedxposed.resourceMappings
 import io.github.chsbuffer.revancedxposed.returns
 

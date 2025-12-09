@@ -8,8 +8,8 @@ import io.github.chsbuffer.revancedxposed.reddit.misc.tracking.url.SanitizeUrlQu
 
 class RedditHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
     BaseHook(app, lpparam) {
-    override val hooks = arrayOf(
-        ::HideAds,
-        ::SanitizeUrlQuery,
+    override val patches = arrayOf(
+        HideAds,
+        SanitizeUrlQuery,
     )
 }

@@ -1,15 +1,18 @@
 package io.github.chsbuffer.revancedxposed.youtube.layout.buttons.action
 
 import app.revanced.extension.youtube.patches.components.ButtonsFilter
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.LithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.addLithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 
-fun YoutubeHook.HideButtons() {
-    dependsOn(::LithoFilter)
+val HideButtons = patch(
+    name = "Hide video action buttons",
+    description = "Adds options to hide action buttons (such as the Download button) under videos.",
+) {
+    dependsOn(LithoFilter)
 
     PreferenceScreen.PLAYER.addPreferences(
         PreferenceScreenPreference(

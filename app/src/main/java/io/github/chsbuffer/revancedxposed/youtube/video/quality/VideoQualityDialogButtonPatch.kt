@@ -2,18 +2,20 @@ package io.github.chsbuffer.revancedxposed.youtube.video.quality
 
 import app.revanced.extension.youtube.videoplayer.VideoQualityDialogButton
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.ControlInitializer
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.PlayerControls
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.addBottomControl
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.initializeBottomControl
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 
-fun YoutubeHook.VideoQualityDialogButton() {
+val VideoQualityDialogButtonPatch = patch(
+    description = "Adds the option to display video quality dialog button in the video player.",
+) {
     dependsOn(
-        ::RememberVideoQuality,
-        ::PlayerControls,
+        RememberVideoQuality,
+        PlayerControls,
     )
 
     PreferenceScreen.PLAYER.addPreferences(

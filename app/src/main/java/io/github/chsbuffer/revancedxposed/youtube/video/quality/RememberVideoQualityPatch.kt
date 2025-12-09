@@ -2,15 +2,22 @@ package io.github.chsbuffer.revancedxposed.youtube.video.quality
 
 import app.revanced.extension.youtube.patches.playback.quality.RememberVideoQualityPatch
 import io.github.chsbuffer.revancedxposed.getIntField
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.ListPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
+import io.github.chsbuffer.revancedxposed.youtube.misc.playertype.PlayerTypeHook
 import io.github.chsbuffer.revancedxposed.youtube.shared.VideoQualityReceiver
 import io.github.chsbuffer.revancedxposed.youtube.shared.videoQualityChangedFingerprint
+import io.github.chsbuffer.revancedxposed.youtube.video.information.VideoInformationPatch
 import io.github.chsbuffer.revancedxposed.youtube.video.information.onCreateHook
 
-fun YoutubeHook.RememberVideoQuality() {
+val RememberVideoQuality = patch {
+    dependsOn(
+        VideoInformationPatch,
+        PlayerTypeHook,
+    )
+
     settingsMenuVideoQualityGroup.addAll(
         listOf(
             ListPreference(

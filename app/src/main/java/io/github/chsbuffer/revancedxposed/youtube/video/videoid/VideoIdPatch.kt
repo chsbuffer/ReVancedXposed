@@ -1,7 +1,7 @@
 package io.github.chsbuffer.revancedxposed.youtube.video.videoid
 
 import app.revanced.extension.shared.Logger
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
+import io.github.chsbuffer.revancedxposed.patch
 
 /**
  * Hooks the new video id when the video changes.
@@ -10,7 +10,9 @@ import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
  */
 val videoIdHooks: MutableList<(String) -> Unit> = mutableListOf()
 
-fun YoutubeHook.VideoId() {
+val VideoId = patch(
+    description = "Hooks to detect when the video id changes.",
+) {
     ::videoIdFingerprint.hookMethod {
         val videoIdMethod = ::PlayerResponseModel_getVideoId.method
         before { param ->

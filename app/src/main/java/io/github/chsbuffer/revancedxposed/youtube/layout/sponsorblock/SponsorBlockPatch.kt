@@ -13,31 +13,34 @@ import app.revanced.extension.youtube.sponsorblock.ui.SponsorBlockStatsPreferenc
 import app.revanced.extension.youtube.sponsorblock.ui.SponsorBlockViewController
 import app.revanced.extension.youtube.sponsorblock.ui.VotingButton
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.setObjectField
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.NonInteractivePreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceCategory
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.ControlInitializer
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.PlayerControls
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.addTopControl
 import io.github.chsbuffer.revancedxposed.youtube.misc.playercontrols.initializeTopControl
 import io.github.chsbuffer.revancedxposed.youtube.misc.playertype.PlayerTypeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
-import io.github.chsbuffer.revancedxposed.youtube.video.information.VideoInformation
+import io.github.chsbuffer.revancedxposed.youtube.video.information.VideoInformationPatch
 import io.github.chsbuffer.revancedxposed.youtube.video.information.onCreateHook
 import io.github.chsbuffer.revancedxposed.youtube.video.information.videoTimeHooks
 import io.github.chsbuffer.revancedxposed.youtube.video.videoid.VideoId
 import io.github.chsbuffer.revancedxposed.youtube.video.videoid.videoIdHooks
 import org.luckypray.dexkit.wrap.DexMethod
 
-fun YoutubeHook.SponsorBlock() {
+val SponsorBlock = patch(
+    name = "SponsorBlock",
+    description = "Adds options to enable and configure SponsorBlock, which can skip undesired video segments such as sponsored content.",
+) {
     dependsOn(
-        ::VideoInformation,
-        ::VideoId,
-        ::PlayerTypeHook,
-        ::PlayerControls,
+        VideoInformationPatch,
+        VideoId,
+        PlayerTypeHook,
+        PlayerControls,
     )
 
     PreferenceScreen.SPONSORBLOCK.addPreferences(

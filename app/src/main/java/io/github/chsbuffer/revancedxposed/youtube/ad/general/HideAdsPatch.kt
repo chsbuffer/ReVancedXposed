@@ -6,17 +6,20 @@ import app.revanced.extension.shared.Utils
 import app.revanced.extension.youtube.patches.components.AdsFilter
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.LithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.addLithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import io.github.chsbuffer.revancedxposed.youtube.misc.verticalscroll.FixVerticalScroll
 
-fun YoutubeHook.HideAds() {
+val HideAds = patch(
+    name = "Hide ads",
+    description = "Adds options to remove general ads.",
+) {
     dependsOn(
-        ::FixVerticalScroll,
-        ::LithoFilter
+        FixVerticalScroll,
+        LithoFilter
     )
 
     PreferenceScreen.ADS.addPreferences(

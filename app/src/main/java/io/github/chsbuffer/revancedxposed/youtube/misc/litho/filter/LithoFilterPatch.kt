@@ -3,14 +3,16 @@ package io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter
 import app.revanced.extension.youtube.patches.components.Filter
 import app.revanced.extension.youtube.patches.components.LithoFilterPatch
 import de.robv.android.xposed.XC_MethodReplacement.returnConstant
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.new
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import java.nio.ByteBuffer
 
 lateinit var addLithoFilter: (Filter) -> Unit
     private set
 
-fun YoutubeHook.LithoFilter() {
+val LithoFilter = patch(
+    description = "Hooks the method which parses the bytes into a ComponentContext to filter components.",
+) {
     addLithoFilter = { filter ->
         LithoFilterPatch.addFilter(filter)
     }

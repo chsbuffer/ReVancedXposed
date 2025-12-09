@@ -9,8 +9,8 @@ import app.revanced.extension.shared.settings.preference.ReVancedAboutPreference
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.hookMethod
-import io.github.chsbuffer.revancedxposed.music.MusicHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.BasePreferenceScreen
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.InputType
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.NonInteractivePreference
@@ -20,7 +20,9 @@ import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.TextPr
 import io.github.chsbuffer.revancedxposed.shared.settings.preferences
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceFragmentCompat_addPreferencesFromResource
 
-fun MusicHook.SettingsHook() {
+val SettingsHook = patch(
+    description = "Adds settings for ReVanced to YouTube Music.",
+) {
     val addPreferencesFromResource = ::PreferenceFragmentCompat_addPreferencesFromResource.method
 
     ::PreferenceFragmentCompat_setPreferencesFromResource.hookMethod {

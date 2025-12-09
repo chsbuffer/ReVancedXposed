@@ -2,16 +2,23 @@ package io.github.chsbuffer.revancedxposed.youtube.interaction.swipecontrols
 
 import app.revanced.extension.shared.settings.preference.ColorPickerWithOpacitySliderPreference
 import app.revanced.extension.youtube.swipecontrols.SwipeControlsHostActivity
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.InputType
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.ListPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.TextPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.playertype.PlayerTypeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import io.github.chsbuffer.revancedxposed.youtube.shared.mainActivityClass
 
-fun YoutubeHook.SwipeControls() {
+val SwipeControls = patch(
+    name = "Swipe controls",
+    description = "Adds options to enable and configure volume and brightness swipe controls.",
+) {
+    dependsOn(
+        PlayerTypeHook,
+    )
+
 //    if (is_19_43_or_greater) {
 //        PreferenceScreen.SWIPE_CONTROLS.addPreferences(
 //            SwitchPreference("revanced_swipe_change_video")
@@ -43,11 +50,7 @@ fun YoutubeHook.SwipeControls() {
         TextPreference("revanced_swipe_volume_sensitivity", inputType = InputType.NUMBER),
     )
 
-    dependsOn(
-        ::PlayerTypeHook,
-    )
-
-    SwipeControlsHostActivity.Companion.hookActivity(::mainActivityClass.clazz)
+    SwipeControlsHostActivity.hookActivity(::mainActivityClass.clazz)
 
     // TODO patch to enable/disable swipe to change video.
 }

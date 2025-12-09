@@ -8,9 +8,9 @@ import io.github.chsbuffer.revancedxposed.strava.upselling.DisableSubscriptionSu
 
 class StravaHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
     BaseHook(app, lpparam) {
-    override val hooks = arrayOf(
-        ::UnlockSubscription,
-        ::DisableSubscriptionSuggestions
+    override val patches = arrayOf(
+        UnlockSubscription,
+        DisableSubscriptionSuggestions
     )
 }
 

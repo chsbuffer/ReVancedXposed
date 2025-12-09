@@ -2,13 +2,16 @@ package io.github.chsbuffer.revancedxposed.youtube.video.audio
 
 import app.revanced.extension.shared.patches.ForceOriginalAudioPatch
 import app.revanced.extension.shared.settings.preference.ForceOriginalAudioSwitchPreference
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.debugging.experimentalBooleanFeatureFlagFingerprint
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import io.github.chsbuffer.revancedxposed.youtube.shared.mainActivityOnCreateFingerprint
 
-fun YoutubeHook.ForceOriginalAudio() {
+val ForceOriginalAudio = patch(
+    name = "Force original audio",
+    description = "Adds an option to always use the original audio track.",
+) {
     PreferenceScreen.VIDEO.addPreferences(
         SwitchPreference(
             key = "revanced_force_original_audio",

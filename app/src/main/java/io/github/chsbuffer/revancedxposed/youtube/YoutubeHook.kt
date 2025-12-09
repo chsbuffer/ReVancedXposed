@@ -6,6 +6,7 @@ import app.revanced.extension.shared.Utils
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import io.github.chsbuffer.revancedxposed.BaseHook
 import io.github.chsbuffer.revancedxposed.addModuleAssets
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.injectHostClassLoaderToSelf
 import io.github.chsbuffer.revancedxposed.shared.misc.CheckRecycleBitmapMediaSession
 import io.github.chsbuffer.revancedxposed.youtube.ad.general.HideAds
@@ -35,32 +36,7 @@ class YoutubeHook(
     lpparam: LoadPackageParam
 ) : BaseHook(app, lpparam) {
 
-    override val hooks = arrayOf(
-        ::ExtensionHook,
-        ::VideoAds,
-        ::BackgroundPlayback,
-        ::SanitizeSharingLinks,
-        ::HideAds,
-        ::SponsorBlock,
-        ::CopyVideoUrl,
-        ::Downloads,
-        ::HideShortsComponents,
-        ::NavigationButtons,
-        ::SwipeControls,
-        ::VideoQuality,
-        ::DisableResumingShortsOnStartup,
-        ::HideLayoutComponents,
-        ::HideButtons,
-        ::PlaybackSpeed,
-        ::EnableDebugging,
-        ::ForceOriginalAudio,
-        ::DisableVideoCodecs,
-        ::CheckRecycleBitmapMediaSession,
-        // make sure settingsHook at end to build preferences
-        ::SettingsHook
-    )
-
-    fun ExtensionHook() {
+    val ExtensionHook = patch {
         injectHostClassLoaderToSelf(this::class.java.classLoader!!, classLoader)
         DexMethod("$YOUTUBE_MAIN_ACTIVITY_CLASS_TYPE->onCreate(Landroid/os/Bundle;)V").hookMethod {
             before {
@@ -70,6 +46,32 @@ class YoutubeHook(
             }
         }
 
-        ExtensionResourceHook()
+        ExtensionResourceHook.run(this)
     }
+
+    override val patches = arrayOf(
+        ExtensionHook,
+        VideoAds,
+        BackgroundPlayback,
+        SanitizeSharingLinks,
+        HideAds,
+        SponsorBlock,
+        CopyVideoUrl,
+        Downloads,
+        HideShortsComponents,
+        NavigationButtons,
+        SwipeControls,
+        VideoQuality,
+        DisableResumingShortsOnStartup,
+        HideLayoutComponents,
+        HideButtons,
+        PlaybackSpeed,
+        EnableDebugging,
+        ForceOriginalAudio,
+        DisableVideoCodecs,
+        CheckRecycleBitmapMediaSession,
+        // make sure settingsHook at end to build preferences
+        SettingsHook
+    )
+
 }

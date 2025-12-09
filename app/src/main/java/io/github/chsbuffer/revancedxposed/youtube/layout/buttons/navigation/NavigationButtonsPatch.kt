@@ -2,17 +2,20 @@ package io.github.chsbuffer.revancedxposed.youtube.layout.buttons.navigation
 
 import android.widget.TextView
 import app.revanced.extension.youtube.patches.NavigationButtonsPatch
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.navigation.NavigationBarHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.navigation.hookNavigationButtonCreated
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import org.luckypray.dexkit.wrap.DexMethod
 
-fun YoutubeHook.NavigationButtons() {
-    dependsOn(::NavigationBarHook)
+val NavigationButtons = patch(
+    name = "Navigation buttons",
+    description = "Adds options to hide and change navigation buttons (such as the Shorts button).",
+) {
+    dependsOn(NavigationBarHook)
 
     val preferences = mutableSetOf(
         SwitchPreference("revanced_hide_home_button"),

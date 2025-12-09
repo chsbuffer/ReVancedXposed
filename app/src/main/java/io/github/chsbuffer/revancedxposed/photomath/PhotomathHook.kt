@@ -8,5 +8,5 @@ import io.github.chsbuffer.revancedxposed.photomath.misc.unlock.plus.UnlockPlus
 class PhotomathHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) : BaseHook(
     app, lpparam
 ) {
-    override val hooks = arrayOf(::UnlockPlus)
+    override val patches = arrayOf(UnlockPlus)
 }

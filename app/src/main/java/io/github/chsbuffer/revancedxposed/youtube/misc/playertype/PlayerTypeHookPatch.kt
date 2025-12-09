@@ -3,10 +3,12 @@ package io.github.chsbuffer.revancedxposed.youtube.misc.playertype
 import android.annotation.SuppressLint
 import android.view.View
 import app.revanced.extension.youtube.patches.PlayerTypeHookPatch
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
+import io.github.chsbuffer.revancedxposed.patch
 
 @SuppressLint("NonUniqueDexKitData")
-fun YoutubeHook.PlayerTypeHook() {
+val PlayerTypeHook = patch(
+    description = "Hook to get the current player type and video playback state.",
+) {
     ::playerTypeFingerprint.hookMethod {
         before { param ->
             PlayerTypeHookPatch.setPlayerType(param.args[0] as Enum<*>)

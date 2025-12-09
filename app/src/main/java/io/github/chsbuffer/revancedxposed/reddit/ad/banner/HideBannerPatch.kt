@@ -3,11 +3,14 @@ package io.github.chsbuffer.revancedxposed.reddit.ad.banner
 import android.view.View
 import app.revanced.extension.shared.Logger
 import app.revanced.extension.shared.Utils
-import io.github.chsbuffer.revancedxposed.reddit.RedditHook
+import io.github.chsbuffer.revancedxposed.patch
 import org.luckypray.dexkit.wrap.DexMethod
 
-fun RedditHook.HideBanner() {
-    val merge_listheader_link_detail = Utils.getResourceIdentifier("merge_listheader_link_detail", "layout")
+val HideBanner = patch(
+    description = "Hides banner ads from comments on subreddits.",
+) {
+    val merge_listheader_link_detail =
+        Utils.getResourceIdentifier("merge_listheader_link_detail", "layout")
     val ad_view_stub = Utils.getResourceIdentifier("ad_view_stub", "id")
     DexMethod("Landroid/view/View;->inflate(Landroid/content/Context;ILandroid/view/ViewGroup;)Landroid/view/View;").hookMethod {
         after { param ->

@@ -1,10 +1,10 @@
 package io.github.chsbuffer.revancedxposed.youtube.video.speed.remember
 
 import app.revanced.extension.youtube.patches.playback.speed.RememberPlaybackSpeedPatch
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.ListPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
-import io.github.chsbuffer.revancedxposed.youtube.video.information.VideoInformation
+import io.github.chsbuffer.revancedxposed.youtube.video.information.VideoInformationPatch
 import io.github.chsbuffer.revancedxposed.youtube.video.information.onCreateHook
 import io.github.chsbuffer.revancedxposed.youtube.video.information.setPlaybackSpeedClassField
 import io.github.chsbuffer.revancedxposed.youtube.video.information.setPlaybackSpeedContainerClassField
@@ -13,10 +13,10 @@ import io.github.chsbuffer.revancedxposed.youtube.video.information.userSelected
 import io.github.chsbuffer.revancedxposed.youtube.video.speed.custom.CustomPlaybackSpeed
 import io.github.chsbuffer.revancedxposed.youtube.video.speed.settingsMenuVideoSpeedGroup
 
-fun YoutubeHook.RememberPlaybackSpeed() {
+val RememberPlaybackSpeed = patch {
     dependsOn(
-        ::VideoInformation,
-        ::CustomPlaybackSpeed
+        VideoInformationPatch,
+        CustomPlaybackSpeed
     )
 
     settingsMenuVideoSpeedGroup.addAll(

@@ -2,13 +2,16 @@ package io.github.chsbuffer.revancedxposed.youtube.misc.backgroundplayback
 
 import app.revanced.extension.youtube.patches.BackgroundPlaybackPatch
 import de.robv.android.xposed.XC_MethodReplacement.returnConstant
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.featureFlagCheck
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 
-fun YoutubeHook.BackgroundPlayback() {
+val BackgroundPlayback = patch(
+    name = "Remove background playback restrictions",
+    description = "Removes restrictions on background playback, including playing kids videos in the background.",
+) {
 
     PreferenceScreen.SHORTS.addPreferences(
         SwitchPreference("revanced_shorts_disable_background_playback"),

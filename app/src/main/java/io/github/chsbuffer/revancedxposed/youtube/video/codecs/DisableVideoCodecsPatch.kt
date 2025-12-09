@@ -2,13 +2,16 @@ package io.github.chsbuffer.revancedxposed.youtube.video.codecs
 
 import app.revanced.extension.youtube.patches.DisableVideoCodecsPatch
 import app.revanced.extension.youtube.settings.Settings
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.invokeOriginalMethod
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import org.luckypray.dexkit.wrap.DexMethod
 
-fun YoutubeHook.DisableVideoCodecs() {
+val DisableVideoCodecs = patch(
+    name = "Disable video codecs",
+    description = "Adds options to disable HDR and VP9 codecs.",
+) {
     PreferenceScreen.VIDEO.addPreferences(
         SwitchPreference("revanced_disable_hdr_video"),
         SwitchPreference("revanced_force_avc_codec")

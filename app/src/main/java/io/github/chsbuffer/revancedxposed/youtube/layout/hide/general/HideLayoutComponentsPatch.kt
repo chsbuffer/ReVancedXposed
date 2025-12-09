@@ -8,21 +8,25 @@ import app.revanced.extension.youtube.patches.components.DescriptionComponentsFi
 import app.revanced.extension.youtube.patches.components.KeywordContentFilter
 import app.revanced.extension.youtube.patches.components.LayoutComponentsFilter
 import io.github.chsbuffer.revancedxposed.new
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.InputType
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.NonInteractivePreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.TextPreference
-import io.github.chsbuffer.revancedxposed.youtube.YoutubeHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.LithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.addLithoFilter
 import io.github.chsbuffer.revancedxposed.youtube.misc.litho.filter.emptyComponentClass
+import io.github.chsbuffer.revancedxposed.youtube.misc.navigation.NavigationBarHook
 import io.github.chsbuffer.revancedxposed.youtube.misc.settings.PreferenceScreen
 import org.luckypray.dexkit.wrap.DexMethod
 
-fun YoutubeHook.HideLayoutComponents() {
-    dependsOn(::LithoFilter)
+val HideLayoutComponents = patch(
+    name = "Hide layout components",
+    description = "Adds options to hide general layout components.",
+) {
+    dependsOn(LithoFilter, NavigationBarHook)
 
     PreferenceScreen.PLAYER.addPreferences(
         PreferenceScreenPreference(

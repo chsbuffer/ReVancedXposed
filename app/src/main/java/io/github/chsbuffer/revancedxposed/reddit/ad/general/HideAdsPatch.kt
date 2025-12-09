@@ -3,14 +3,15 @@ package io.github.chsbuffer.revancedxposed.reddit.ad.general
 import app.revanced.extension.shared.Logger
 import io.github.chsbuffer.revancedxposed.findFieldByExactType
 import io.github.chsbuffer.revancedxposed.getObjectField
-import io.github.chsbuffer.revancedxposed.reddit.RedditHook
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.reddit.ad.banner.HideBanner
 import io.github.chsbuffer.revancedxposed.reddit.ad.comments.HideCommentAds
 import io.github.chsbuffer.revancedxposed.setObjectField
 
-fun RedditHook.HideAds() {
+val HideAds = patch(
+    name = "Hide ads",) {
     dependsOn(
-        ::HideBanner, ::HideCommentAds
+        HideBanner, HideCommentAds
     )
     // region Filter promoted ads (does not work in popular or latest feed)
     ::adPostFingerprint.hookMethod {

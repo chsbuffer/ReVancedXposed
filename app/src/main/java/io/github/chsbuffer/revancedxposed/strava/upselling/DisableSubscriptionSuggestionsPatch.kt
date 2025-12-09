@@ -1,10 +1,12 @@
 package io.github.chsbuffer.revancedxposed.strava.upselling
 
 import io.github.chsbuffer.revancedxposed.getObjectFieldOrNullAs
-import io.github.chsbuffer.revancedxposed.strava.StravaHook
+import io.github.chsbuffer.revancedxposed.patch
 import java.util.Collections
 
-fun StravaHook.DisableSubscriptionSuggestions() {
+val DisableSubscriptionSuggestions = patch(
+    name = "Disable subscription suggestions",
+) {
     ::getModulesFingerprint.hookMethod {
         before { param ->
             val pageValue = param.thisObject.getObjectFieldOrNullAs<String>("page") ?: return@before

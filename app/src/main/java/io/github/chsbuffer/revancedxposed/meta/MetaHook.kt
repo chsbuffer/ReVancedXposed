@@ -7,5 +7,5 @@ import io.github.chsbuffer.revancedxposed.meta.ads.HideAds
 
 class MetaHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) :
     BaseHook(app, lpparam) {
-    override val hooks = arrayOf(::HideAds)
+    override val patches = arrayOf(HideAds)
 }
