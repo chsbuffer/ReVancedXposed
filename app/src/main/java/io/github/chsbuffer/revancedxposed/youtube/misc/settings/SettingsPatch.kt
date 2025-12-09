@@ -21,6 +21,7 @@ import io.github.chsbuffer.revancedxposed.shared.settings.preferences
 
 @Suppress("UNREACHABLE_CODE")
 val SettingsHook = patch(
+    name = "<SettingsHook>",
     description = "Adds settings for ReVanced to YouTube.",
 ) {
     ::PreferenceFragmentCompat_addPreferencesFromResource.hookMethod(scopedHook(::PreferenceInflater_inflate.member) {

@@ -9,7 +9,8 @@ import io.github.chsbuffer.revancedxposed.reddit.ad.comments.HideCommentAds
 import io.github.chsbuffer.revancedxposed.setObjectField
 
 val HideAds = patch(
-    name = "Hide ads",) {
+    name = "Hide ads",
+) {
     dependsOn(
         HideBanner, HideCommentAds
     )

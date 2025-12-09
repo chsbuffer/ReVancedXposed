@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><!--suppress DeprecatedClassUsageInspection -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen android:title="@string/open_source_license">
+        <Preference
+            android:summary="GNU General Public License v3.0"
+            android:title="ReVanced Patches">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/revanced/revanced-patches" />
+        </Preference>
+        <Preference
+            android:summary="LGPL-3.0 license, LuckyPray"
+            android:title="DexKit">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/LuckyPray/DexKit" />
+        </Preference>
+        <Preference
+            android:layout_height="wrap_content"
+            android:summary="Apache License 2.0, Kotlin Team"
+            android:title="Kotlin">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://kotlinlang.org/" />
+        </Preference>
+        <Preference
+            android:layout_height="wrap_content"
+            android:summary="Apache License 2.0, Copyright 2008 Google Inc."
+            android:title="Gson">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/google/gson/" />
+        </Preference>
+        <Preference
+            android:layout_height="wrap_content"
+            android:summary="MIT License, Copyright (c) 2020 Kittinun Vantasin"
+            android:title="Fuel">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/kittinunf/fuel" />
+        </Preference>
+    </PreferenceScreen>
+</PreferenceScreen>

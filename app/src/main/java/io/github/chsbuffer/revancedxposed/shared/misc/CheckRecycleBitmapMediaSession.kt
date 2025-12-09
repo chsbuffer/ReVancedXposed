@@ -10,7 +10,7 @@ import io.github.chsbuffer.revancedxposed.hookMethod
 import org.luckypray.dexkit.wrap.DexMethod
 import java.lang.reflect.Member
 
-val CheckRecycleBitmapMediaSession = patch {
+val CheckRecycleBitmapMediaSession = patch(name = "<CheckRecycleBitmapMediaSession>") {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return@patch
 
     if (runCatching { DexMethod("Landroid/media/MediaMetadata\$Builder;->calculateSampleSize(IIII)I").toMember() }.isSuccess) {

@@ -27,7 +27,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         "com.google.android.apps.youtube.music" to { MusicHook(app, lpparam) },
         "com.google.android.youtube" to { YoutubeHook(app, lpparam) },
         "com.reddit.frontpage" to { RedditHook(app, lpparam) },
-        "com.google.android.apps.photos" to { GooglePhotosHook(lpparam) },
+        "com.google.android.apps.photos" to { GooglePhotosHook(app, lpparam) },
         "com.instagram.android" to { MetaHook(app, lpparam) },
         "com.instagram.barcelona" to { MetaHook(app, lpparam) },
         "com.strava" to { StravaHook(app, lpparam) },

@@ -2,10 +2,10 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="MainTheme" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="p">true</item>
-        <item name="android:colorAccent">#1a73e9</item>
+    <style name="MainTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="p">false</item>
+        <item name="android:colorAccent">#64b5f6</item>
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>

@@ -11,6 +11,7 @@ import app.revanced.extension.shared.Logger
 import app.revanced.extension.shared.StringRef
 import app.revanced.extension.shared.Utils
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
@@ -122,8 +123,15 @@ class DependedHookFailedException(
 ) : Exception("Depended hook $subHookName failed.", exception)
 
 @SuppressLint("CommitPrefEdits")
-abstract class BaseHook(private val app: Application, val lpparam: LoadPackageParam) : IHook {
+abstract class BaseHook(val appContext: Application, val lpparam: LoadPackageParam) : IHook {
     override val classLoader = lpparam.classLoader!!
+
+    /**
+     * @see io.github.chsbuffer.revancedxposed.activity.AppPatchSettingsActivity.AppPatchSettingsFragment.onCreate
+     * */
+    val xpref = XSharedPreferences(
+        BuildConfig.APPLICATION_ID, lpparam.packageName
+    ).takeIf { it.file.canRead() }
 
     abstract val patches: Array<Patch>
     private val appliedPatches = mutableSetOf<Patch>()
@@ -131,7 +139,7 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
 
     // cache
     private val moduleRel = BuildConfig.COMMIT_HASH
-    private var cache = SharedPrefCache(app)
+    private var cache = SharedPrefCache(appContext)
     private var dexkit = run {
         System.loadLibrary("dexkit")
         DexKitCacheBridge.init(cache)
@@ -142,7 +150,7 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
         val t = measureTimeMillis {
             tryLoadCache()
             try {
-                applyHooks()
+                applyPatches()
                 handleResult()
                 logDebugInfo()
             } finally {
@@ -156,7 +164,7 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
     private fun tryLoadCache() {
         // cache by host update time + module version
         // also no cache if is DEBUG
-        val packageInfo = app.packageManager.getPackageInfo(app.packageName, 0)
+        val packageInfo = appContext.packageManager.getPackageInfo(appContext.packageName, 0)
 
         val id = "${packageInfo.lastUpdateTime}-$moduleRel"
         val cachedId = cache.get("id", null)
@@ -173,9 +181,13 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
         }
     }
 
-    private fun applyHooks() {
+    private fun applyPatches() {
         patches.forEach { hook ->
             if (appliedPatches.contains(hook)) return@forEach
+            /**
+             * @see io.github.chsbuffer.revancedxposed.activity.AppPatchSettingsActivity.AppPatchSettingsFragment.onCreate
+             * */
+            if (xpref?.getBoolean(hook.name, true) == false) return@forEach // Pref Key
             runCatching { hook.run(this) }.onFailure { err ->
                 XposedBridge.log(err)
                 failedPatches.add(hook)
@@ -205,7 +217,7 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
     }
 
     private fun getAppVersion(): String {
-        val packageInfo = app.packageManager.getPackageInfo(app.packageName, 0)
+        val packageInfo = appContext.packageManager.getPackageInfo(appContext.packageName, 0)
         val versionName = packageInfo.versionName
         val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             packageInfo.longVersionCode
@@ -224,59 +236,6 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
                 appliedPatches.add(hook)
             }
         }
-    }
-
-    val ExtensionResourceHook = patch {
-        app.addModuleAssets()
-        StringRef.resources = app.resources
-        StringRef.packageName = BuildConfig.APPLICATION_ID
-        StringRef.packageName2 = app.packageName
-
-        app.callMethod(
-            "registerActivityLifecycleCallbacks",
-            object : Application.ActivityLifecycleCallbacks {
-                var handleWebView: Boolean = false
-
-                override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
-                    Logger.printDebug { "onActivityCreated $activity" }
-                    if (!handleWebView) {
-                        // call only once to let webview add it's assets
-                        WebView(activity).destroy()
-                        app.addModuleAssets()
-                        StringRef.resources = app.resources
-                        StringRef.packageName = BuildConfig.APPLICATION_ID
-                        StringRef.packageName2 = app.packageName
-                        handleWebView = true
-                    }
-
-                    activity.addModuleAssets()
-                }
-
-                override fun onActivityDestroyed(activity: Activity) {
-                    Logger.printDebug { "onActivityDestroyed $activity" }
-                }
-
-                override fun onActivityPaused(activity: Activity) {
-                    Logger.printDebug { "onActivityPaused $activity" }
-                }
-
-                override fun onActivityResumed(activity: Activity) {
-                    Logger.printDebug { "onActivityResumed $activity" }
-                    activity.addModuleAssets()
-                }
-
-                override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {
-                    Logger.printDebug { "onActivitySaveInstanceState $activity" }
-                }
-
-                override fun onActivityStarted(activity: Activity) {
-                    Logger.printDebug { "onActivityStarted $activity" }
-                }
-
-                override fun onActivityStopped(activity: Activity) {
-                    Logger.printDebug { "onActivityStopped $activity" }
-                }
-            })
     }
 
     fun KProperty0<FindMethodFunc>.hookMethod(block: HookDsl<IHookCallback>.() -> Unit) {
@@ -356,4 +315,55 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
         key: String, crossinline findFunc: DexKitBridge.() -> List<MethodData>
     ): List<DexMethod> = dexkit.getMethodsDirectOrEmpty(
         key, wrapFindList(key, findFunc) { it.descriptor })
+}
+
+val ExtensionResourceHook = patch {
+    appContext.addModuleAssets()
+    StringRef.resources = appContext.resources
+    StringRef.packageName = BuildConfig.APPLICATION_ID
+    StringRef.packageName2 = appContext.packageName
+
+    appContext.callMethod(
+        "registerActivityLifecycleCallbacks", object : Application.ActivityLifecycleCallbacks {
+            var handleWebView: Boolean = false
+
+            override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
+                Logger.printDebug { "onActivityCreated $activity" }
+                if (!handleWebView) {
+                    WebView(activity).destroy()
+                    appContext.addModuleAssets()
+                    StringRef.resources = appContext.resources
+                    StringRef.packageName = BuildConfig.APPLICATION_ID
+                    StringRef.packageName2 = appContext.packageName
+                    handleWebView = true
+                }
+
+                activity.addModuleAssets()
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+                Logger.printDebug { "onActivityDestroyed $activity" }
+            }
+
+            override fun onActivityPaused(activity: Activity) {
+                Logger.printDebug { "onActivityPaused $activity" }
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+                Logger.printDebug { "onActivityResumed $activity" }
+                activity.addModuleAssets()
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {
+                Logger.printDebug { "onActivitySaveInstanceState $activity" }
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+                Logger.printDebug { "onActivityStarted $activity" }
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+                Logger.printDebug { "onActivityStopped $activity" }
+            }
+        })
 }

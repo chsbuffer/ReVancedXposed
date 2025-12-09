@@ -5,9 +5,10 @@ import android.app.Application
 import app.revanced.extension.shared.Utils
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import io.github.chsbuffer.revancedxposed.BaseHook
+import io.github.chsbuffer.revancedxposed.ExtensionResourceHook
 import io.github.chsbuffer.revancedxposed.addModuleAssets
-import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.injectHostClassLoaderToSelf
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.shared.misc.CheckRecycleBitmapMediaSession
 import io.github.chsbuffer.revancedxposed.youtube.ad.general.HideAds
 import io.github.chsbuffer.revancedxposed.youtube.ad.video.VideoAds
@@ -31,47 +32,47 @@ import io.github.chsbuffer.revancedxposed.youtube.video.quality.VideoQuality
 import io.github.chsbuffer.revancedxposed.youtube.video.speed.PlaybackSpeed
 import org.luckypray.dexkit.wrap.DexMethod
 
+val ExtensionHook = patch(name = "<ExtensionHook>") {
+    injectHostClassLoaderToSelf(this::class.java.classLoader!!, classLoader)
+    DexMethod("$YOUTUBE_MAIN_ACTIVITY_CLASS_TYPE->onCreate(Landroid/os/Bundle;)V").hookMethod {
+        before {
+            val mainActivity = it.thisObject as Activity
+            mainActivity.addModuleAssets()
+            Utils.setContext(mainActivity)
+        }
+    }
+
+    ExtensionResourceHook.run(this)
+}
+
+val YouTubePatches = arrayOf(
+    ExtensionHook,
+    VideoAds,
+    BackgroundPlayback,
+    SanitizeSharingLinks,
+    HideAds,
+    SponsorBlock,
+    CopyVideoUrl,
+    Downloads,
+    HideShortsComponents,
+    NavigationButtons,
+    SwipeControls,
+    VideoQuality,
+    DisableResumingShortsOnStartup,
+    HideLayoutComponents,
+    HideButtons,
+    PlaybackSpeed,
+    EnableDebugging,
+    ForceOriginalAudio,
+    DisableVideoCodecs,
+    CheckRecycleBitmapMediaSession,
+    // make sure settingsHook at end to build preferences
+    SettingsHook
+)
+
 class YoutubeHook(
     app: Application,
     lpparam: LoadPackageParam
 ) : BaseHook(app, lpparam) {
-
-    val ExtensionHook = patch {
-        injectHostClassLoaderToSelf(this::class.java.classLoader!!, classLoader)
-        DexMethod("$YOUTUBE_MAIN_ACTIVITY_CLASS_TYPE->onCreate(Landroid/os/Bundle;)V").hookMethod {
-            before {
-                val mainActivity = it.thisObject as Activity
-                mainActivity.addModuleAssets()
-                Utils.setContext(mainActivity)
-            }
-        }
-
-        ExtensionResourceHook.run(this)
-    }
-
-    override val patches = arrayOf(
-        ExtensionHook,
-        VideoAds,
-        BackgroundPlayback,
-        SanitizeSharingLinks,
-        HideAds,
-        SponsorBlock,
-        CopyVideoUrl,
-        Downloads,
-        HideShortsComponents,
-        NavigationButtons,
-        SwipeControls,
-        VideoQuality,
-        DisableResumingShortsOnStartup,
-        HideLayoutComponents,
-        HideButtons,
-        PlaybackSpeed,
-        EnableDebugging,
-        ForceOriginalAudio,
-        DisableVideoCodecs,
-        CheckRecycleBitmapMediaSession,
-        // make sure settingsHook at end to build preferences
-        SettingsHook
-    )
-
+    override val patches = YouTubePatches
 }
