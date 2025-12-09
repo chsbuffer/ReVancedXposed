@@ -238,11 +238,13 @@ abstract class BaseHook(private val app: Application, val lpparam: LoadPackagePa
                 override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
                     Logger.printDebug { "onActivityCreated $activity" }
                     if (!handleWebView) {
+                        // call only once to let webview add it's assets
                         WebView(activity).destroy()
                         app.addModuleAssets()
                         StringRef.resources = app.resources
                         StringRef.packageName = BuildConfig.APPLICATION_ID
                         StringRef.packageName2 = app.packageName
+                        handleWebView = true
                     }
 
                     activity.addModuleAssets()
