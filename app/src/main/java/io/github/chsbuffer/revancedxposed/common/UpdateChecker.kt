@@ -3,10 +3,11 @@ package io.github.chsbuffer.revancedxposed.common
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Instrumentation
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.text.Html
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 import app.revanced.extension.shared.Logger
 import app.revanced.extension.shared.Utils
 import com.google.gson.Gson
@@ -56,7 +57,7 @@ const val OWNER = "chsbuffer"
 const val REPO = "ReVancedXposed"
 const val currentVersionCode = BuildConfig.VERSION_CODE
 
-class UpdateChecker(private val context: Context) : CoroutineScope {
+class UpdateChecker() : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + CoroutineExceptionHandler { _, err ->
             Logger.printException({ "coroutineContext error" }, err)
@@ -67,6 +68,11 @@ class UpdateChecker(private val context: Context) : CoroutineScope {
     private lateinit var latestRelease: ReleaseInfo
 
     lateinit var unhook: XC_MethodHook.Unhook
+
+    fun setActivity(activity: Activity) {
+        currentActivity = WeakReference(activity)
+    }
+
     fun hookNewActivity() {
         unhook = XposedHelpers.findAndHookMethod(
             Instrumentation::class.java,
@@ -89,7 +95,7 @@ class UpdateChecker(private val context: Context) : CoroutineScope {
         runCatching { checkUpdate() }
     }
 
-    fun checkUpdate() {
+    fun checkUpdate(silent: Boolean = true) {
         launch {
             try {
                 val response = Fuel.get(
@@ -111,6 +117,7 @@ class UpdateChecker(private val context: Context) : CoroutineScope {
                     showUpdateDialog()
                 } else {
                     Logger.printInfo { "no update found for ReVanced Xposed" }
+                    if (!silent) Utils.showToastLong("ReVanced Xposed is up to date.")
                 }
             } catch (e: Throwable) {
                 Logger.printException({ "checkUpdate error" }, e)
@@ -139,21 +146,25 @@ class UpdateChecker(private val context: Context) : CoroutineScope {
         }
     }
 
+    fun requireActivity() = currentActivity.get()!!
+
     private fun showUpdateDialog() {
         launch(Dispatchers.Main) {
             try {
                 val theme =
                     if (Utils.isDarkModeEnabled()) android.R.style.Theme_DeviceDefault_Dialog_Alert
                     else android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
-                val dialog = AlertDialog.Builder(
-                    currentActivity.get(), theme
-                ).setTitle("Found new version of ReVanced Xposed ${latestVersionInfo.versionName}")
+                val dialog = AlertDialog.Builder(requireActivity(), theme)
+                    .setTitle("Found new version of ReVanced Xposed ${latestVersionInfo.versionName}")
                     .setMessage(
-                        Html.fromHtml(latestRelease.releaseNoteHtml, Html.FROM_HTML_MODE_COMPACT)
+                        Html.fromHtml(latestRelease.releaseNoteHtml, Html.FROM_HTML_MODE_LEGACY)
                     ).setPositiveButton(android.R.string.ok) { _, _ ->
                         openReleasePage()
-                    }.setNegativeButton(context.getString(android.R.string.cancel), null).create()
+                    }.setNegativeButton(requireActivity().getString(android.R.string.cancel), null)
+                    .create()
                 dialog.show()
+                dialog.findViewById<TextView>(android.R.id.message).movementMethod =
+                    LinkMovementMethod.getInstance()
             } catch (e: Throwable) {
                 Logger.printException({ "showUpdateDialog error" }, e)
             }
@@ -164,7 +175,7 @@ class UpdateChecker(private val context: Context) : CoroutineScope {
         try {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(latestRelease.releaseUrl))
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+            requireActivity().startActivity(intent)
         } catch (e: Exception) {
             e.printStackTrace()
             Utils.showToastLong(e.message.toString())

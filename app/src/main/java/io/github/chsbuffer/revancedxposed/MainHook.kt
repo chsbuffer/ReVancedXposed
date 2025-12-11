@@ -91,7 +91,7 @@ fun inContext(lpparam: LoadPackageParam, f: (Application) -> Unit) {
             Utils.setContext(app)
             f(app)
             if (XposedInit.modulePath.startsWith("/data/app/"))
-                UpdateChecker(app).hookNewActivity()
+                UpdateChecker().hookNewActivity()
         }
     })
 }
