@@ -21,6 +21,12 @@ Upstream patches are included via Git submodule for reference and to utilize sha
 
 ### Example: Patch Implementation (Contoso App)
 
+#### Add Contoso to module scope
+
+- `app/src/main/AndroidManifest.xml`: Query package for module settings
+- `app/src/main/res/values/arrays.xml`: Xposed scope recommendation
+- `README.md`
+
 #### `Fingerprints.kt`
 ```kotlin
 package io.github.chsbuffer.revancedxposed.contoso.misc.unlock.plus
@@ -40,9 +46,9 @@ val isPlusUnlockedFingerprint = fingerprint {
 package io.github.chsbuffer.revancedxposed.contoso.misc.unlock.plus
 
 import static de.robv.android.xposed.XC_MethodReplacement.returnConstant
-import io.github.chsbuffer.revancedxposed.contoso.ContosoHook
+import io.github.chsbuffer.revancedxposed.patch
 
-fun ContosoHook.UnlockPlus() {
+val UnlockPlus = patch(name = "Unlock Plus") {
     ::isPlusUnlockedFingerprint.hookMethod(returnConstant(true))
 }
 ```
@@ -51,16 +57,20 @@ fun ContosoHook.UnlockPlus() {
 ```kotlin
 package io.github.chsbuffer.revancedxposed.contoso
 
-import android.app.Application
-import de.robv.android.xposed.callbacks.XC_LoadPackage
-import io.github.chsbuffer.revancedxposed.BaseHook
 import io.github.chsbuffer.revancedxposed.contoso.misc.unlock.plus.UnlockPlus
 
-class ContosoHook(app: Application, lpparam: XC_LoadPackage.LoadPackageParam) : BaseHook(
-    app, lpparam
-) {
-    override val hooks = arrayOf(::UnlockPlus)
-}
+val ContosoPatches = arrayOf(UnlockPlus)
+```
+
+#### `AppPatchInfo.kt`
+```kotlin
+import io.github.chsbuffer.revancedxposed.contoso.ContosoPatches
+
+val appPatchConfigurations = listOf(
+    // ...
+    AppPatchInfo("Contoso", "com.contoso.app", ContosoPatches)
+)
+
 ```
 
 ### Porting Upstream Patches
