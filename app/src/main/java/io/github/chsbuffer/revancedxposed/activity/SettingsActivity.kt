@@ -12,7 +12,9 @@ import android.preference.PreferenceFragment
 import android.view.MenuItem
 import app.revanced.extension.shared.Utils
 import app.revanced.extension.shared.settings.preference.ReVancedAboutPreference
+import io.github.chsbuffer.revancedxposed.AppPatchInfo
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.appPatchConfigurations
 import io.github.chsbuffer.revancedxposed.common.UpdateChecker
 
 class SettingsActivity : Activity() {

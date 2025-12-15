@@ -6,13 +6,13 @@ import app.revanced.extension.shared.patches.SanitizeSharingLinksPatch
 import app.revanced.extension.shared.settings.preference.NoTitlePreferenceCategory
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
-import io.github.chsbuffer.revancedxposed.BaseHook
+import io.github.chsbuffer.revancedxposed.PatchExecutor
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.BasePreferenceScreen
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceCategory
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference.Sorting
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
 
-fun BaseHook.SanitizeSharingLinks(
+fun PatchExecutor.SanitizeSharingLinks(
     preferenceScreen: BasePreferenceScreen.Screen,
     replaceMusicLinksWithYouTube: Boolean = false
 ) {

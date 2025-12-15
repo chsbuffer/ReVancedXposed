@@ -4,7 +4,7 @@ import app.revanced.extension.shared.patches.EnableDebuggingPatch
 import app.revanced.extension.shared.settings.preference.ClearLogBufferPreference
 import app.revanced.extension.shared.settings.preference.ExportLogToClipboardPreference
 import app.revanced.extension.shared.settings.preference.FeatureFlagsManagerPreference
-import io.github.chsbuffer.revancedxposed.BaseHook
+import io.github.chsbuffer.revancedxposed.PatchExecutor
 import io.github.chsbuffer.revancedxposed.hookMethod
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.BasePreference
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.BasePreferenceScreen
@@ -13,7 +13,7 @@ import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.Prefer
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.PreferenceScreenPreference.Sorting
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
 
-fun BaseHook.EnableDebugging(
+fun PatchExecutor.EnableDebugging(
     preferenceScreen: BasePreferenceScreen.Screen,
     additionalDebugPreferences: List<BasePreference> = emptyList()
 ) {

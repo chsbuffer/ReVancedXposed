@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import app.revanced.extension.shared.Utils
 import app.revanced.extension.youtube.patches.PlayerControlsPatch
-import io.github.chsbuffer.revancedxposed.BaseHook
+import io.github.chsbuffer.revancedxposed.PatchExecutor
 import io.github.chsbuffer.revancedxposed.R
 import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
@@ -148,7 +148,7 @@ val PlayerControls = patch(
     }
 }
 
-private fun BaseHook.initInjectVisibilityCheckCall() {
+private fun PatchExecutor.initInjectVisibilityCheckCall() {
     ::controlsOverlayVisibilityFingerprint.hookMethod {
         before { param ->
             bottomControls.forEach {

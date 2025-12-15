@@ -1,10 +1,7 @@
 package io.github.chsbuffer.revancedxposed.youtube
 
 import android.app.Activity
-import android.app.Application
 import app.revanced.extension.shared.Utils
-import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
-import io.github.chsbuffer.revancedxposed.BaseHook
 import io.github.chsbuffer.revancedxposed.ExtensionResourceHook
 import io.github.chsbuffer.revancedxposed.addModuleAssets
 import io.github.chsbuffer.revancedxposed.injectHostClassLoaderToSelf
@@ -69,10 +66,3 @@ val YouTubePatches = arrayOf(
     // make sure settingsHook at end to build preferences
     SettingsHook
 )
-
-class YoutubeHook(
-    app: Application,
-    lpparam: LoadPackageParam
-) : BaseHook(app, lpparam) {
-    override val patches = YouTubePatches
-}

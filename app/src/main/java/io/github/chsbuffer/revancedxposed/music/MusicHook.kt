@@ -1,8 +1,5 @@
 package io.github.chsbuffer.revancedxposed.music
 
-import android.app.Application
-import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
-import io.github.chsbuffer.revancedxposed.BaseHook
 import io.github.chsbuffer.revancedxposed.ExtensionResourceHook
 import io.github.chsbuffer.revancedxposed.music.ad.video.HideVideoAds
 import io.github.chsbuffer.revancedxposed.music.audio.exclusiveaudio.EnableExclusiveAudioPlayback
@@ -26,7 +23,3 @@ val YTMusicPatches = arrayOf(
     SanitizeSharingLinks,
     SettingsHook
 )
-
-class MusicHook(app: Application, lpparam: LoadPackageParam) : BaseHook(app, lpparam) {
-    override val patches = YTMusicPatches
-}

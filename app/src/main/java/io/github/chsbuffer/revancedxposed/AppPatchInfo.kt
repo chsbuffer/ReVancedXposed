@@ -1,6 +1,5 @@
-package io.github.chsbuffer.revancedxposed.activity
+package io.github.chsbuffer.revancedxposed
 
-import io.github.chsbuffer.revancedxposed.Patch
 import io.github.chsbuffer.revancedxposed.googlephotos.GooglePhotosPatches
 import io.github.chsbuffer.revancedxposed.meta.MetaPatches
 import io.github.chsbuffer.revancedxposed.music.YTMusicPatches
@@ -21,3 +20,5 @@ val appPatchConfigurations = listOf(
     AppPatchInfo("Strava", "com.strava", StravaPatches),
     AppPatchInfo("Photomath", "com.microblink.photomath", PhotomathPatches),
 )
+
+val patchesByPackage = appPatchConfigurations.associate { it.packageName to it.patches }

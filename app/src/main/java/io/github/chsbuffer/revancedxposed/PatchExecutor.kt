@@ -30,14 +30,13 @@ import java.lang.reflect.Method
 import kotlin.reflect.KProperty0
 import kotlin.system.measureTimeMillis
 
-fun patch(name: String = "", description: String = "", func: BaseHook.() -> Unit) =
+fun patch(name: String = "", description: String = "", func: PatchExecutor.() -> Unit) =
     Patch(name, description, func)
 
-class Patch(val name: String, val description: String, val run: BaseHook.() -> Unit)
+class Patch(val name: String, val description: String, val run: PatchExecutor.() -> Unit)
 
 interface IHook {
     val classLoader: ClassLoader
-    fun Hook()
 
     fun DexMethod.hookMethod(callback: XC_MethodHook) {
         XposedBridge.hookMethod(toMember(), callback)
@@ -111,7 +110,7 @@ class SharedPrefCache(app: Application) : DexKitCacheBridge.Cache {
 
     fun saveCache() {
         val edit = pref.edit()
-        map.forEach { k, v ->
+        map.forEach { (k, v) ->
             edit.putString(k, v)
         }
         edit.commit()
@@ -123,17 +122,17 @@ class DependedHookFailedException(
 ) : Exception("Depended hook $subHookName failed.", exception)
 
 @SuppressLint("CommitPrefEdits")
-abstract class BaseHook(val appContext: Application, val lpparam: LoadPackageParam) : IHook {
+class PatchExecutor(val appContext: Application, val lpparam: LoadPackageParam): IHook {
     override val classLoader = lpparam.classLoader!!
 
     /**
      * @see io.github.chsbuffer.revancedxposed.activity.AppPatchSettingsActivity.AppPatchSettingsFragment.onCreate
      * */
-    val xpref = XSharedPreferences(
+    private val patchPreferences = XSharedPreferences(
         BuildConfig.APPLICATION_ID, lpparam.packageName
     ).takeIf { it.file.canRead() }
 
-    abstract val patches: Array<Patch>
+    private lateinit var patches: Array<Patch>
     private val appliedPatches = mutableSetOf<Patch>()
     private val failedPatches = mutableListOf<Patch>()
 
@@ -146,12 +145,13 @@ abstract class BaseHook(val appContext: Application, val lpparam: LoadPackagePar
         DexKitCacheBridge.create("", lpparam.appInfo.sourceDir)
     }
 
-    override fun Hook() {
+    fun applyPatches(patches: Array<Patch>) {
+        this.patches = patches
         val t = measureTimeMillis {
-            tryLoadCache()
+            loadCacheIfValid()
             try {
-                applyPatches()
-                handleResult()
+                executePatches()
+                finalizePatching()
                 logDebugInfo()
             } finally {
                 dexkit.close()
@@ -161,7 +161,7 @@ abstract class BaseHook(val appContext: Application, val lpparam: LoadPackagePar
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun tryLoadCache() {
+    private fun loadCacheIfValid() {
         // cache by host update time + module version
         // also no cache if is DEBUG
         val packageInfo = appContext.packageManager.getPackageInfo(appContext.packageName, 0)
@@ -181,13 +181,13 @@ abstract class BaseHook(val appContext: Application, val lpparam: LoadPackagePar
         }
     }
 
-    private fun applyPatches() {
+    private fun executePatches() {
         patches.forEach { hook ->
             if (appliedPatches.contains(hook)) return@forEach
             /**
              * @see io.github.chsbuffer.revancedxposed.activity.AppPatchSettingsActivity.AppPatchSettingsFragment.onCreate
              * */
-            if (xpref?.getBoolean(hook.name, true) == false) return@forEach // Pref Key
+            if (patchPreferences?.getBoolean(hook.name, true) == false) return@forEach // Pref Key
             runCatching { hook.run(this) }.onFailure { err ->
                 XposedBridge.log(err)
                 failedPatches.add(hook)
@@ -197,7 +197,7 @@ abstract class BaseHook(val appContext: Application, val lpparam: LoadPackagePar
         }
     }
 
-    private fun handleResult() {
+    private fun finalizePatching() {
         cache.saveCache()
         val success = failedPatches.isEmpty()
         if (!success) {

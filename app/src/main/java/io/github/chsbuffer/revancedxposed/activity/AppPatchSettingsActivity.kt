@@ -16,6 +16,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import io.github.chsbuffer.revancedxposed.R
+import io.github.chsbuffer.revancedxposed.appPatchConfigurations
 
 class AppPatchSettingsActivity : Activity() {
 
@@ -65,7 +66,7 @@ class AppPatchSettingsActivity : Activity() {
 
             val screen = preferenceManager.createPreferenceScreen(context)
             /** XSharedPreference
-             * @see io.github.chsbuffer.revancedxposed.BaseHook.xpref */
+             * @see io.github.chsbuffer.revancedxposed.PatchExecutor.patchPreferences */
             preferenceManager.sharedPreferencesMode = MODE_WORLD_READABLE
             preferenceManager.sharedPreferencesName = appPatchInfo.packageName
 
@@ -103,7 +104,7 @@ class AppPatchSettingsActivity : Activity() {
                 if (patchInfo.name.startsWith("<")) continue
                 CheckBoxPreference(context).apply {
                     /** XSharedPreference
-                     * @see io.github.chsbuffer.revancedxposed.BaseHook.applyPatches */
+                     * @see io.github.chsbuffer.revancedxposed.PatchExecutor.applyPatches */
                     key = patchInfo.name // Pref Key
                     title = patchInfo.name
                     summary = patchInfo.description
