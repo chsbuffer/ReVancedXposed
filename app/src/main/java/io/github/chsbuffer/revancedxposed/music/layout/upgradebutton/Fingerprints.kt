@@ -10,7 +10,6 @@ internal val pivotBarConstructorFingerprint = fingerprint {
     returns("V")
     parameters("L", "Z")
     opcodes(
-        Opcode.CHECK_CAST,
         Opcode.INVOKE_INTERFACE,
         Opcode.GOTO,
         Opcode.IPUT_OBJECT,
