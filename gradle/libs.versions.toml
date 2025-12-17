@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.1"
+agp = "8.13.2"
 kotlin = "2.2.20"
 dexkit = "2.0.7"
 xposed = "82"
