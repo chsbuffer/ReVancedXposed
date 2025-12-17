@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId = "io.github.chsbuffer.revancedxposed"
-        versionCode = 35
+        versionCode = 36
         versionName = "1.0.$versionCode"
         val patchVersion = Properties().apply {
             rootProject.file("revanced-patches/gradle.properties").inputStream().use { load(it) }
