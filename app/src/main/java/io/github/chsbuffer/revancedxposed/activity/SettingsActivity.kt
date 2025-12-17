@@ -4,15 +4,20 @@ package io.github.chsbuffer.revancedxposed.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceCategory
 import android.preference.PreferenceFragment
+import android.preference.SwitchPreference
 import android.view.MenuItem
 import app.revanced.extension.shared.Utils
 import app.revanced.extension.shared.settings.preference.ReVancedAboutPreference
 import io.github.chsbuffer.revancedxposed.AppPatchInfo
+import io.github.chsbuffer.revancedxposed.BuildConfig
 import io.github.chsbuffer.revancedxposed.R
 import io.github.chsbuffer.revancedxposed.appPatchConfigurations
 import io.github.chsbuffer.revancedxposed.common.UpdateChecker
@@ -25,8 +30,7 @@ class SettingsActivity : Activity() {
         actionBar?.setDisplayShowHomeEnabled(true)
         if (savedInstanceState != null) return
 
-        fragmentManager.beginTransaction()
-            .replace(R.id.settings_container, SettingsFragment())
+        fragmentManager.beginTransaction().replace(R.id.settings_container, SettingsFragment())
             .commit()
     }
 
@@ -55,9 +59,25 @@ class SettingsActivity : Activity() {
             val rootScreen = preferenceManager.createPreferenceScreen(context)
             preferenceScreen = rootScreen
 
+            Preference(context).apply {
+                setSummary(R.string.slogan_summary)
+                isEnabled = false
+                rootScreen.addPreference(this)
+            }
+
             Utils.setContext(context)
             ReVancedAboutPreference(context).apply {
                 setTitle(R.string.about_title)
+                summary = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+                rootScreen.addPreference(this)
+            }
+
+            Preference(context).apply {
+                setTitle(R.string.faq_title)
+                intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/chsbuffer/ReVancedXposed/wiki/Frequently-Asked-Questions")
+                )
                 rootScreen.addPreference(this)
             }
 
@@ -74,6 +94,10 @@ class SettingsActivity : Activity() {
                 }
                 rootScreen.addPreference(this)
             }
+            UpdateChecker().apply {
+                setActivity(activity)
+                autoCheckUpdate()
+            }
 
             val isModuleActivated: Boolean = try {
                 context.getSharedPreferences("prefs", MODE_WORLD_READABLE)
@@ -84,10 +108,31 @@ class SettingsActivity : Activity() {
 
             if (!isModuleActivated) {
                 rootScreen.addPreference(Preference(context).apply {
-                    summary = "Activate this module in Module Management!"
+                    setSummary(R.string.module_not_activated_summary)
                     isEnabled = false
                 })
                 return
+            }
+
+            SwitchPreference(context).apply {
+                setTitle(R.string.hide_icon_title)
+                val aliasName = ComponentName(activity, SettingsActivity::class.java.name + "Alias")
+                val packageManager = activity.packageManager
+
+                isChecked =
+                    packageManager.getComponentEnabledSetting(aliasName) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                setOnPreferenceChangeListener { _, newValue ->
+                    val isShow = newValue as Boolean
+                    val status =
+                        if (isShow) PackageManager.COMPONENT_ENABLED_STATE_DISABLED else PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                    if (packageManager.getComponentEnabledSetting(aliasName) != status) {
+                        packageManager.setComponentEnabledSetting(
+                            aliasName, status, PackageManager.DONT_KILL_APP
+                        )
+                    }
+                    true
+                }
+                rootScreen.addPreference(this)
             }
 
             val patchSelectionCategory = PreferenceCategory(context).apply {

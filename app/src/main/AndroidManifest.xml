@@ -37,6 +37,16 @@
             android:name="xposedscope"
             android:resource="@array/scope" />
 
+        <activity-alias
+            android:name=".activity.SettingsActivityAlias"
+            android:exported="true"
+            android:targetActivity=".activity.SettingsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <activity
             android:name=".activity.SettingsActivity"
             android:exported="true"
