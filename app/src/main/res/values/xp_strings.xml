@@ -8,6 +8,7 @@
     <string name="about_title">About</string>
     <string name="open_source_license">Open-source licenses</string>
     <string name="hide_icon_title">Hide icon from launcher</string>
+    <string name="hide_icon_summary">You must also disable \"Force apps to show launcher icons\" in LSPosed Manager.</string>
     <string name="faq_title">Frequently Asked Questions</string>
     <string name="module_not_activated_summary">Activate this module in Module Management!</string>
     <string name="slogan_summary">ReVanced LSPosed module by ChsBuffer.\n\nThis is not an official ReVanced project, do not ask the ReVanced developers for help.</string>

@@ -99,23 +99,9 @@ class SettingsActivity : Activity() {
                 autoCheckUpdate()
             }
 
-            val isModuleActivated: Boolean = try {
-                context.getSharedPreferences("prefs", MODE_WORLD_READABLE)
-                true
-            } catch (_: SecurityException) {
-                false
-            }
-
-            if (!isModuleActivated) {
-                rootScreen.addPreference(Preference(context).apply {
-                    setSummary(R.string.module_not_activated_summary)
-                    isEnabled = false
-                })
-                return
-            }
-
             SwitchPreference(context).apply {
                 setTitle(R.string.hide_icon_title)
+                setSummary(R.string.hide_icon_summary)
                 val aliasName = ComponentName(activity, SettingsActivity::class.java.name + "Alias")
                 val packageManager = activity.packageManager
 
@@ -133,6 +119,21 @@ class SettingsActivity : Activity() {
                     true
                 }
                 rootScreen.addPreference(this)
+            }
+
+            val isModuleActivated: Boolean = try {
+                context.getSharedPreferences("prefs", MODE_WORLD_READABLE)
+                true
+            } catch (_: SecurityException) {
+                false
+            }
+
+            if (!isModuleActivated) {
+                rootScreen.addPreference(Preference(context).apply {
+                    setSummary(R.string.module_not_activated_summary)
+                    isEnabled = false
+                })
+                return
             }
 
             val patchSelectionCategory = PreferenceCategory(context).apply {
