@@ -59,7 +59,7 @@
 ### Threads
 - Hide ads
 
-### Reddit (2024.17.0)
+### Reddit
 - Hide ads
 - Sanitize sharing links
 

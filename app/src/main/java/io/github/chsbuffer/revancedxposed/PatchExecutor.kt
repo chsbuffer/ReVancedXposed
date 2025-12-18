@@ -255,6 +255,9 @@ class PatchExecutor(val appContext: Application, val lpparam: LoadPackageParam):
     val KProperty0<FindMethodFunc>.method
         get() = getDexMethod(this.name, this.get()).toMethod()
 
+    val KProperty0<FindMethodFunc>.constructor
+        get() = getDexMethod(this.name, this.get()).toConstructor()
+
     val KProperty0<FindMethodFunc>.dexMethod
         get() = getDexMethod(this.name, this.get())
 

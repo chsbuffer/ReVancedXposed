@@ -8,7 +8,7 @@ val HideCommentAds = patch(
     ::hideCommentAdsFingerprint.hookMethod {
         before {
             Logger.printDebug { "Hide Comment" }
-            it.result = Object()
+            it.result = it.args[0]
         }
     }
 }

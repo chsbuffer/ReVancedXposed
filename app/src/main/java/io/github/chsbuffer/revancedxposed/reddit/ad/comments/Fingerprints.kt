@@ -1,11 +1,11 @@
 package io.github.chsbuffer.revancedxposed.reddit.ad.comments
 
 import io.github.chsbuffer.revancedxposed.fingerprint
+import org.luckypray.dexkit.query.enums.StringMatchType
 
 val hideCommentAdsFingerprint = fingerprint {
-    strings(
-        "link",
-        // CommentPageRepository is not returning a link object
-        "is not returning a link object"
-    )
+    methodMatcher {
+        name("invokeSuspend")
+        declaredClass("LoadAdsCombinedCall", StringMatchType.Contains)
+    }
 }

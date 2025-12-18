@@ -47,8 +47,12 @@ val HideAds = patch(
     // AdElementConverter is conveniently responsible for inserting all feed ads.
     // By removing the appending instruction no ad posts gets appended to the feed.
     ::AdPostSectionInitFingerprint.hookMethod {
+        val arg = ::AdPostSectionInitFingerprint.constructor.parameters.indexOfFirst {
+            MutableList::class.java.isAssignableFrom(it.type)
+        }
+        Logger.printInfo { "AdPostSection sections arg index: $arg" }
         before { param ->
-            val sections = param.args[3] as MutableList<*>
+            val sections = param.args[arg] as MutableList<*>
             sections.javaClass.findFieldByExactType(Array<Any>::class.java)!!
                 .set(sections, emptyArray<Any>())
             Logger.printDebug { "Removed ads from popular and latest feed" }

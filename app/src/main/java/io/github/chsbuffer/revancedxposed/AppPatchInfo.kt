@@ -13,7 +13,7 @@ class AppPatchInfo(val appName: String, val packageName: String, val patches: Ar
 val appPatchConfigurations = listOf(
     AppPatchInfo("YouTube", "com.google.android.youtube", YouTubePatches),
     AppPatchInfo("YT Music", "com.google.android.apps.youtube.music", YTMusicPatches),
-    AppPatchInfo("Reddit (2024.17.0)", "com.reddit.frontpage", RedditPatches),
+    AppPatchInfo("Reddit", "com.reddit.frontpage", RedditPatches),
     AppPatchInfo("Google Photos", "com.google.android.apps.photos", GooglePhotosPatches),
     AppPatchInfo("Instagram", "com.instagram.android", MetaPatches),
     AppPatchInfo("Threads", "com.instagram.barcelona", MetaPatches),
