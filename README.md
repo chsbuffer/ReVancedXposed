@@ -38,6 +38,7 @@
 - Hide video action buttons
 - Disable resuming Shorts on startup
 - Disable video codecs
+- Disable auto captions
 
 ### Spotify (Moved to Dedicated Repository)
 

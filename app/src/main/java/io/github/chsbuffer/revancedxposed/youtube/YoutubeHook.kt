@@ -12,6 +12,7 @@ import io.github.chsbuffer.revancedxposed.youtube.ad.video.VideoAds
 import io.github.chsbuffer.revancedxposed.youtube.interaction.copyvideourl.CopyVideoUrl
 import io.github.chsbuffer.revancedxposed.youtube.interaction.downloads.Downloads
 import io.github.chsbuffer.revancedxposed.youtube.interaction.swipecontrols.SwipeControls
+import io.github.chsbuffer.revancedxposed.youtube.layout.autocaptions.AutoCaptionsPatch
 import io.github.chsbuffer.revancedxposed.youtube.layout.buttons.action.HideButtons
 import io.github.chsbuffer.revancedxposed.youtube.layout.buttons.navigation.NavigationButtons
 import io.github.chsbuffer.revancedxposed.youtube.layout.hide.general.HideLayoutComponents
@@ -62,6 +63,7 @@ val YouTubePatches = arrayOf(
     EnableDebugging,
     ForceOriginalAudio,
     DisableVideoCodecs,
+    AutoCaptionsPatch,
     CheckRecycleBitmapMediaSession,
     // make sure settingsHook at end to build preferences
     SettingsHook
