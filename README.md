@@ -9,7 +9,9 @@
 
 **ReVanced LSPosed module by ChsBuffer.**  
 >[!IMPORTANT]  
-> This is not an official ReVanced project, do not ask the ReVanced developers for help.
+> - This is **NOT an official ReVanced project**, do not ask the ReVanced developers for help.  
+> - **Root access** is strictly **required** to use this module!
+> - **Spotify is no longer supported!** Get the new module [here](https://github.com/chsbuffer/ReVancedXposed_Spotify)
 
 ## Downloads
 - **Release build**: [Download](https://github.com/chsbuffer/ReVancedXposed/releases/latest)
