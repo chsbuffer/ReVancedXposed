@@ -110,6 +110,7 @@ class SharedPrefCache(app: Application) : DexKitCacheBridge.Cache {
 
     fun saveCache() {
         val edit = pref.edit()
+        edit.clear()
         map.forEach { (k, v) ->
             edit.putString(k, v)
         }
