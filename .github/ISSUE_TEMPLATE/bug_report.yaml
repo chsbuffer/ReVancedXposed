@@ -2,25 +2,55 @@ name: Bug report
 description: File a bug/issue
 title: "[Bug] "
 body:
-- type: checkboxes
-  attributes:
-    label: Is there an existing issue for this?
-    options:
-    - label: I have searched the existing issues
+  - type: markdown
+    attributes:
+      value: |
+        Before creating a new bug report, please keep the following in mind:
+
+        - **Do not submit a duplicate bug report**: Search for existing bug reports [here](https://github.com/chsbuffer/ReVancedXposed/issues?q=%5BBug%5D).
+        - **Check the troubleshooting guide**: A solution to your issue might be found in the [FAQ](https://github.com/chsbuffer/ReVancedXposed/wiki/Frequently-Asked-Questions).
+  - type: checkboxes
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I have checked all open and closed bug reports and this is not a duplicate.
+          required: true
+        - label: I have read the FAQ.
+          required: true
+  - type: input
+    attributes:
+      label: Environment
+      description: |
+        OS version, Android version, Root manager (Magisk/KSU/APatch), LSPosed version.  
+        Example: LineageOS 21, Android 14, Magisk 29.0, JingMatrix/LSPosed-v1.10.2-7182.
+    validations:
       required: true
-- type: input
-  attributes:
-    label: Environment
-    description: |
-      Example: LineageOS 21, Android 14, Magisk 29.0, LSPosed-v1.9.2-7024. Alternatively, upload the LSPosed log.
-  validations:
-    required: false
-- type: textarea
-  attributes:
-    label: Current Behavior
-    description: |
-      A concise description of what you're experiencing, along with the version of the application.
-  
-      Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
-  validations:
-    required: false
+  - type: textarea
+    attributes:
+      label: Bug description
+      description: |
+        - Describe your bug in detail
+        - Add steps to reproduce the bug if possible (Step 1. ... Step 2. ...)
+        - Add images and videos if possible
+        - Include the version of the target application
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Error logs
+      description: |
+        - If You are reporting a YouTube bug, enable Debug Logging in YouTube Settings -> ReVanced Settings -> Miscellaneous -> Debugging.
+        - Reproduce the bug
+        - Open LSPosed Manager -> Logs
+        - Save logs
+        - Upload the saved zip file
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Re-acknowledgement
+      options:
+        - label: I have chosen an appropriate title.
+          required: true
+        - label: I understand that issues without necessary information will be closed without notice.
+          required: true
