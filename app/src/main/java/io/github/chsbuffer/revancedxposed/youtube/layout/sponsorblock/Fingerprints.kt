@@ -1,6 +1,7 @@
 package io.github.chsbuffer.revancedxposed.youtube.layout.sponsorblock
 
 import io.github.chsbuffer.revancedxposed.AccessFlags
+import io.github.chsbuffer.revancedxposed.Opcode
 import io.github.chsbuffer.revancedxposed.accessFlags
 import io.github.chsbuffer.revancedxposed.findFieldDirect
 import io.github.chsbuffer.revancedxposed.findMethodDirect
@@ -9,6 +10,23 @@ import io.github.chsbuffer.revancedxposed.parameters
 import io.github.chsbuffer.revancedxposed.resourceMappings
 import io.github.chsbuffer.revancedxposed.returns
 import io.github.chsbuffer.revancedxposed.youtube.shared.seekbarFingerprint
+
+internal val appendTimeFingerprint = fingerprint {
+    returns("V")
+    accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
+    parameters("Ljava/lang/CharSequence;", "Ljava/lang/CharSequence;", "Ljava/lang/CharSequence;")
+    opcodes(
+        Opcode.INVOKE_VIRTUAL,
+        Opcode.MOVE_RESULT_OBJECT,
+        Opcode.IGET_OBJECT,
+        Opcode.IGET_OBJECT,
+        Opcode.CHECK_CAST,
+        Opcode.INVOKE_VIRTUAL,
+        Opcode.MOVE_RESULT_OBJECT,
+        Opcode.INVOKE_STATIC,
+        Opcode.MOVE_RESULT,
+    )
+}
 
 val SponsorBarRect = findFieldDirect {
     val clazz = seekbarFingerprint().declaredClass!!

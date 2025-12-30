@@ -132,7 +132,12 @@ val SponsorBlock = patch(
         )
     )
 
-    // TODO Append the new time to the player layout.
+    // Append the new time to the player layout.
+    ::appendTimeFingerprint.hookMethod {
+        before {
+            it.args[2] = SegmentPlaybackController.appendTimeWithoutSegments(it.args[2].toString())
+        }
+    }
 
     // Initialize the player controller.
     onCreateHook.add { SegmentPlaybackController.initialize(it) }
