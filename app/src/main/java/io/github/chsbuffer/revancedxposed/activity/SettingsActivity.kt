@@ -8,12 +8,13 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceCategory
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
-import android.view.MenuItem
+import android.window.OnBackInvokedDispatcher
 import app.revanced.extension.shared.Utils
 import app.revanced.extension.shared.settings.preference.ReVancedAboutPreference
 import io.github.chsbuffer.revancedxposed.AppPatchInfo
@@ -21,11 +22,19 @@ import io.github.chsbuffer.revancedxposed.BuildConfig
 import io.github.chsbuffer.revancedxposed.R
 import io.github.chsbuffer.revancedxposed.appPatchConfigurations
 import io.github.chsbuffer.revancedxposed.common.UpdateChecker
+import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            onBackInvokedDispatcher.registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT
+            ) {
+                onBackPressed()
+            }
+        }
         setContentView(R.layout.activity_settings)
         actionBar?.setDisplayShowHomeEnabled(true)
         if (savedInstanceState != null) return
@@ -34,11 +43,10 @@ class SettingsActivity : Activity() {
             .commit()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        finishAndRemoveTask()
+        exitProcess(0)
     }
 
     class SettingsFragment : PreferenceFragment() {
