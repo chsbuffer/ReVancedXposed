@@ -2,7 +2,6 @@ package io.github.chsbuffer.revancedxposed.youtube.video.information
 
 import app.revanced.extension.shared.Logger
 import app.revanced.extension.youtube.patches.VideoInformation
-import com.google.android.libraries.youtube.innertube.model.media.VideoQuality
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
@@ -10,12 +9,12 @@ import io.github.chsbuffer.revancedxposed.findFirstFieldByExactType
 import io.github.chsbuffer.revancedxposed.getStaticObjectField
 import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
+import io.github.chsbuffer.revancedxposed.youtube.shared.VideoQualityClass
 import io.github.chsbuffer.revancedxposed.youtube.video.playerresponse.PlayerResponseMethodHook
 import io.github.chsbuffer.revancedxposed.youtube.video.playerresponse.playerResponseBeforeVideoIdHooks
 import io.github.chsbuffer.revancedxposed.youtube.video.playerresponse.playerResponseVideoIdHooks
 import io.github.chsbuffer.revancedxposed.youtube.video.videoid.VideoId
 import io.github.chsbuffer.revancedxposed.youtube.video.videoid.videoIdHooks
-import org.luckypray.dexkit.wrap.DexClass
 import java.lang.ref.WeakReference
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -79,11 +78,11 @@ class PlaybackController(
     }
 }
 
-private lateinit var getQualityName: (VideoQuality) -> String
-private lateinit var getResolution: (VideoQuality) -> Int
+lateinit var getQualityNameMethod: (Any) -> String
+lateinit var getResolutionMethod: (Any) -> Int
 
-fun VideoQuality.getResolution() = getResolution(this)
-fun VideoQuality.getQualityName() = getQualityName(this)
+fun getResolution(quality: Any) = getResolutionMethod(quality)
+fun getQualityName(quality: Any) = getQualityNameMethod(quality)
 
 val VideoInformationPatch = patch(
     description = "Hooks YouTube to get information about the current playing video.",
@@ -211,23 +210,20 @@ val VideoInformationPatch = patch(
     })
 
     // videoQuality
-    val YOUTUBE_VIDEO_QUALITY_CLASS_TYPE =
-        "Lcom/google/android/libraries/youtube/innertube/model/media/VideoQuality;"
-
-    val videoQualityClass = DexClass(YOUTUBE_VIDEO_QUALITY_CLASS_TYPE).toClass()
+    val videoQualityClass = ::VideoQualityClass.clazz
     val qualityNameField = videoQualityClass.findFirstFieldByExactType(String::class.java)
     val resolutionField = videoQualityClass.findFirstFieldByExactType(Int::class.java)
 
-    getQualityName = { quality -> qualityNameField.get(quality) as String }
-    getResolution = { quality -> resolutionField.get(quality) as Int }
+    getQualityNameMethod = { quality -> qualityNameField.get(quality) as String }
+    getResolutionMethod = { quality -> resolutionField.get(quality) as Int }
 
     // Fix bad data used by YouTube.
     XposedBridge.hookAllConstructors(
         videoQualityClass, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
-                val quality = param.thisObject as VideoQuality
+                val quality = param.thisObject
                 val newResolution = VideoInformation.fixVideoQualityResolution(
-                    quality.getQualityName(), quality.getResolution()
+                    getQualityName(quality), getResolution(quality)
                 )
                 resolutionField.set(quality, newResolution)
             }
@@ -240,7 +236,7 @@ val VideoInformationPatch = patch(
         val setQualityMenuIndexMethod = ::setQualityMenuIndexMethod.method
 
         @Suppress("UNCHECKED_CAST") before { param ->
-            val qualities = param.args[0] as Array<out VideoQuality>
+            val qualities = param.args[0] as Array<out Any>
             val originalQualityIndex = param.args[1] as Int
             val menu = param.thisObject.let { onItemClickListenerClass.get(it) }
                 .let { setQualityField.get(it) }

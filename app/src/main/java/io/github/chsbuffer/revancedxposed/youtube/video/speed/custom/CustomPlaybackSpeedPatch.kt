@@ -3,9 +3,8 @@ package io.github.chsbuffer.revancedxposed.youtube.video.speed.custom
 import app.revanced.extension.youtube.patches.components.PlaybackSpeedMenuFilter
 import app.revanced.extension.youtube.patches.playback.speed.CustomPlaybackSpeedPatch
 import app.revanced.extension.youtube.patches.playback.speed.CustomPlaybackSpeedPatch.customPlaybackSpeeds
-import io.github.chsbuffer.revancedxposed.findFirstFieldByExactType
-import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.invokeOriginalMethod
+import io.github.chsbuffer.revancedxposed.patch
 import io.github.chsbuffer.revancedxposed.scopedHook
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.InputType
 import io.github.chsbuffer.revancedxposed.shared.misc.settings.preference.SwitchPreference
@@ -52,12 +51,17 @@ val CustomPlaybackSpeed = patch(
     // Replace the speeds float array with custom speeds.
     // These speeds are used if the speed menu is immediately opened after a video is opened.
     ::speedArrayGeneratorFingerprint.hookMethod {
-        val PlayerConfigModelClass =
-            classLoader.loadClass("com.google.android.libraries.youtube.innertube.model.media.PlayerConfigModel")
-        val source = PlayerConfigModelClass.findFirstFieldByExactType(FloatArray::class.java)
-            .get(null) as FloatArray
+        val source = ::speedsFloatArrayField.field.get(null) as FloatArray
         val chunkSize = source.size
         before {
+            /*
+            * The method hardcoded array length (determined during compilation/obfuscation)
+            * to iterate through the playback speed float values in PlayerConfigModel.
+            * To bypass this constraint,
+            * We divide the custom speeds into chunks matching the original array's size,
+            * repeatedly populate the original static float array,
+            * Invoke the original method for each chunk to transform raw floats into the expected Model objects.
+            * */
             val result = customPlaybackSpeeds.asIterable().chunked(chunkSize).map { chunk ->
                 chunk.forEachIndexed { index, value -> source[index] = value }
                 (it.invokeOriginalMethod() as Array<*>)
@@ -104,8 +108,7 @@ val CustomPlaybackSpeed = patch(
                 before {
                     tapAndHoldPath.set(true)
                 }
-            }
-        )
+            })
 
         settingsMenuVideoSpeedGroup.add(
             TextPreference("revanced_speed_tap_and_hold", inputType = InputType.NUMBER_DECIMAL),

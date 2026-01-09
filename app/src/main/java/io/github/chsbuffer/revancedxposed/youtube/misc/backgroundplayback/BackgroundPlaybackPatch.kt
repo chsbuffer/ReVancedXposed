@@ -22,10 +22,13 @@ val BackgroundPlayback = patch(
             it.result = BackgroundPlaybackPatch.isBackgroundPlaybackAllowed(it.result as Boolean)
         }
     }
-    ::backgroundPlaybackManagerShortsFingerprint.hookMethod {
-        after {
-            it.result =
-                BackgroundPlaybackPatch.isBackgroundShortsPlaybackAllowed(it.result as Boolean)
+
+    ::backgroundPlaybackManagerShortsFingerprint.dexMethodList.forEach {
+        it.hookMethod {
+            after {
+                it.result =
+                    BackgroundPlaybackPatch.isBackgroundShortsPlaybackAllowed(it.result as Boolean)
+            }
         }
     }
 
@@ -43,5 +46,15 @@ val BackgroundPlayback = patch(
         ::pipInputConsumerFeatureFlagFingerprint.hookMethod(scopedHook(::featureFlagCheck.member) {
             before { if (it.args[0] == PIP_INPUT_CONSUMER_FEATURE_FLAG) it.result = false }
         })
+    }
+
+    // Client flag that interferes with background playback of some video types.
+    // Exact purpose is not clear and it's used in ~ 100 locations.
+    // Starts with 20.29.xx
+    ::featureFlagCheck.hookMethod {
+        before {
+            if (it.args[0] == 45698813L)
+                it.result = false
+        }
     }
 }

@@ -1,6 +1,7 @@
 package io.github.chsbuffer.revancedxposed.youtube.video.audio
 
 import io.github.chsbuffer.revancedxposed.AccessFlags
+import io.github.chsbuffer.revancedxposed.findClassDirect
 import io.github.chsbuffer.revancedxposed.findMethodListDirect
 import io.github.chsbuffer.revancedxposed.fingerprint
 
@@ -8,7 +9,15 @@ internal val formatStreamModelToStringFingerprint = fingerprint {
     accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
     returns("Ljava/lang/String;")
     name("toString")
-    definingClass("Lcom/google/android/libraries/youtube/innertube/model/media/FormatStreamModel;")
+    strings(
+        // Strings are partial matches.
+        "isDefaultAudioTrack=",
+        "audioTrackId="
+    )
+}
+
+val formatStringModelClass = findClassDirect {
+    formatStreamModelToStringFingerprint().declaredClass!!
 }
 
 /*
@@ -17,6 +26,7 @@ internal val formatStreamModelToStringFingerprint = fingerprint {
 * audioTrackDisplayName
 * */
 val getFormatStreamModelGetter = findMethodListDirect {
+    val formatStringModelClass = formatStringModelClass().name
     formatStreamModelToStringFingerprint().invokes.windowed(3).first {
         it[0].returnTypeName == "boolean" &&
                 it[1].returnTypeName == "java.lang.String" &&
@@ -24,7 +34,7 @@ val getFormatStreamModelGetter = findMethodListDirect {
     }.also {
         it.forEach { m ->
             require(m.paramCount == 0) { "Expected no parameters for FormatStreamModel getter methods" }
-            require(m.declaredClass!!.simpleName == "FormatStreamModel") { "Expected FormatStreamModel instance method" }
+            require(m.declaredClassName == formatStringModelClass) { "Expected FormatStreamModel instance method" }
         }
     }
 }

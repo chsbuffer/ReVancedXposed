@@ -3,6 +3,7 @@ package io.github.chsbuffer.revancedxposed.youtube.video.speed.custom
 import io.github.chsbuffer.revancedxposed.AccessFlags
 import io.github.chsbuffer.revancedxposed.Opcode
 import io.github.chsbuffer.revancedxposed.RequireAppVersion
+import io.github.chsbuffer.revancedxposed.findFieldDirect
 import io.github.chsbuffer.revancedxposed.findMethodDirect
 import io.github.chsbuffer.revancedxposed.fingerprint
 import io.github.chsbuffer.revancedxposed.parameters
@@ -25,8 +26,15 @@ internal val showOldPlaybackSpeedMenuFingerprint = fingerprint {
 internal val speedArrayGeneratorFingerprint = fingerprint {
     accessFlags(AccessFlags.PUBLIC, AccessFlags.STATIC)
     returns("[L")
-    parameters("Lcom/google/android/libraries/youtube/innertube/model/player/PlayerResponseModel;")
+    parameters("L")
     strings("0.0#")
+}
+
+// found in com.google.android.libraries.youtube.innertube.model.media.PlayerConfigModel
+val speedsFloatArrayField = findFieldDirect {
+    speedArrayGeneratorFingerprint().usingFields.single {
+        it.field.typeSign == "[F"
+    }.field
 }
 
 internal val speedLimiterFingerprint = findMethodDirect {

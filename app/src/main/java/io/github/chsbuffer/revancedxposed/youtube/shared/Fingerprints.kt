@@ -1,13 +1,15 @@
 package io.github.chsbuffer.revancedxposed.youtube.shared
 
 import io.github.chsbuffer.revancedxposed.AccessFlags
+import io.github.chsbuffer.revancedxposed.Opcode
 import io.github.chsbuffer.revancedxposed.findClassDirect
 import io.github.chsbuffer.revancedxposed.findMethodDirect
 import io.github.chsbuffer.revancedxposed.fingerprint
 import org.luckypray.dexkit.query.enums.StringMatchType
 import java.lang.reflect.Modifier
 
-internal const val YOUTUBE_MAIN_ACTIVITY_CLASS_TYPE = "Lcom/google/android/apps/youtube/app/watchwhile/MainActivity;"
+internal const val YOUTUBE_MAIN_ACTIVITY_CLASS_TYPE =
+    "Lcom/google/android/apps/youtube/app/watchwhile/MainActivity;"
 
 val conversionContextFingerprintToString = fingerprint {
     parameters()
@@ -48,12 +50,15 @@ val seekbarFingerprint = fingerprint {
 
 val videoQualityChangedFingerprint = fingerprint {
     accessFlags(AccessFlags.PUBLIC, AccessFlags.FINAL)
+    opcodes(
+        Opcode.IGET,
+        Opcode.CONST_4,
+        Opcode.IF_NE,
+        Opcode.NEW_INSTANCE,
+        Opcode.IGET_OBJECT,
+    )
     methodMatcher {
-        addInvoke {
-            declaredClass =
-                "com.google.android.libraries.youtube.innertube.model.media.VideoQuality"
-            name = "<init>"
-        }
+        addUsingNumber(2)
         addUsingField {
             field {
                 // VIDEO_QUALITY_SETTING_UNKNOWN Enum
@@ -65,6 +70,13 @@ val videoQualityChangedFingerprint = fingerprint {
     }
 }
 
+val VideoQualityClass = findClassDirect {
+    videoQualityChangedFingerprint().invokes.single {
+        it.name == "<init>"
+    }.declaredClass!!
+}
+
 val VideoQualityReceiver = findMethodDirect {
-    videoQualityChangedFingerprint().invokes.single { it.paramCount == 1 && it.paramTypeNames[0] == "com.google.android.libraries.youtube.innertube.model.media.VideoQuality" }
+    val videoQualityClassName = VideoQualityClass().name
+    videoQualityChangedFingerprint().invokes.single { it.paramCount == 1 && it.paramTypeNames[0] == videoQualityClassName }
 }
