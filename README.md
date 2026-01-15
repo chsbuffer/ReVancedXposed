@@ -42,6 +42,8 @@
 - Disable resuming Shorts on startup
 - Disable video codecs
 - Disable auto captions
+- Alternative thumbnails
+- Bypass image region restrictions
 
 ### Spotify (Moved to Dedicated Repository)
 
