@@ -19,6 +19,8 @@ import io.github.chsbuffer.revancedxposed.youtube.layout.hide.general.HideLayout
 import io.github.chsbuffer.revancedxposed.youtube.layout.hide.shorts.HideShortsComponents
 import io.github.chsbuffer.revancedxposed.youtube.layout.sponsorblock.SponsorBlock
 import io.github.chsbuffer.revancedxposed.youtube.layout.startupshortsreset.DisableResumingShortsOnStartup
+import io.github.chsbuffer.revancedxposed.youtube.layout.thumbnails.AlternativeThumbnailsPatch
+import io.github.chsbuffer.revancedxposed.youtube.layout.thumbnails.BypassImageRegionRestrictionsPatch
 import io.github.chsbuffer.revancedxposed.youtube.misc.backgroundplayback.BackgroundPlayback
 import io.github.chsbuffer.revancedxposed.youtube.misc.debugging.EnableDebugging
 import io.github.chsbuffer.revancedxposed.youtube.misc.privacy.SanitizeSharingLinks
@@ -64,6 +66,8 @@ val YouTubePatches = arrayOf(
     ForceOriginalAudio,
     DisableVideoCodecs,
     AutoCaptionsPatch,
+    AlternativeThumbnailsPatch,
+    BypassImageRegionRestrictionsPatch,
     CheckRecycleBitmapMediaSession,
     // make sure settingsHook at end to build preferences
     SettingsHook
