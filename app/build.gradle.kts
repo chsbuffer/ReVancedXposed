@@ -7,7 +7,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 val gitCommitHashProvider = providers.exec {
@@ -67,8 +66,9 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            if (ksFile.exists())
+            if (ksFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     lint {
@@ -79,14 +79,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     sourceSets {
-        getByName("main") {
-            java {
-                srcDirs(
-                    "../revanced-patches/extensions/shared/library/src/main/java",
-                    "../revanced-patches/extensions/youtube/src/main/java",
-                    "../revanced-patches/extensions/music/src/main/java",
-                )
-            }
+        named("main") {
+            val srcDirs = arrayOf(
+                "../revanced-patches/extensions/shared/library/src/main/java",
+                "../revanced-patches/extensions/youtube/src/main/java",
+                "../revanced-patches/extensions/music/src/main/java",
+            )
+            java.directories += srcDirs
+            kotlin.directories += srcDirs
         }
     }
 }
@@ -95,7 +95,7 @@ kotlin {
         freeCompilerArgs.addAll(
             "-Xno-param-assertions",
             "-Xno-receiver-assertions",
-            "-Xno-call-assertions"
+            "-Xno-call-assertions",
         )
         jvmTarget = JvmTarget.JVM_17
     }
@@ -106,7 +106,7 @@ tasks.withType<Test> {
 
 dependencies {
 //    implementation(libs.dexkit)
-    implementation(group = "", name = "dexkit-android", ext = "aar")
+    implementation(":dexkit-android@aar")
     implementation("com.google.flatbuffers:flatbuffers-java:23.5.26") // dexkit dependency
     implementation(libs.annotation)
     implementation(libs.gson)

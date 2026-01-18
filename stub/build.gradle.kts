@@ -8,14 +8,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    sourceSets  {
-        getByName("main") {
-            java {
-                srcDirs(
-                    "../revanced-patches/patches/stub/src/main/java",
-                    "../revanced-patches/extensions/youtube/stub/src/main/java"
-                )
-            }
+    sourceSets {
+        named("main") {
+            java.directories += arrayOf(
+                "../revanced-patches/patches/stub/src/main/java",
+                "../revanced-patches/extensions/youtube/stub/src/main/java"
+            )
         }
     }
 }

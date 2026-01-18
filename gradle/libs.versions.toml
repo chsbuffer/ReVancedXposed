@@ -1,13 +1,12 @@
 [versions]
-agp = "8.13.2"
-kotlin = "2.2.20"
+agp = "9.0.0"
 dexkit = "2.0.7"
 xposed = "82"
 annotation = "1.9.1"
 gson = "2.13.2"
 kotlinxCoroutinesAndroid = "1.10.2"
 fuel = "3.0.0-alpha04"
-junit = "6.0.1"
+junit = "6.0.2"
 jadx = "1.5.3"
 slf4j = "2.0.17"
 
@@ -25,5 +24,4 @@ slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
