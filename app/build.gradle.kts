@@ -14,6 +14,11 @@ val gitCommitHashProvider = providers.exec {
     workingDir = rootProject.rootDir
 }.standardOutput.asText!!
 
+val gitCommitDateProvider = providers.exec {
+    commandLine("git log -1 --format=%ct".split(" "))
+    workingDir = rootProject.rootDir
+}.standardOutput.asText!!
+
 android {
     namespace = "io.github.chsbuffer.revancedxposed"
 
@@ -26,6 +31,7 @@ android {
         }["version"]
         buildConfigField("String", "PATCH_VERSION", "\"$patchVersion\"")
         buildConfigField("String", "COMMIT_HASH", "\"${gitCommitHashProvider.get().trim()}\"")
+        buildConfigField("long", "COMMIT_DATE", "${gitCommitDateProvider.get().trim()}L")
     }
     flavorDimensions += "abi"
     productFlavors {

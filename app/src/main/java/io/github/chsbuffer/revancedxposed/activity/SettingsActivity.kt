@@ -14,6 +14,7 @@ import android.preference.Preference
 import android.preference.PreferenceCategory
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
+import android.text.format.DateUtils
 import android.window.OnBackInvokedDispatcher
 import app.revanced.extension.shared.Utils
 import app.revanced.extension.shared.settings.preference.ReVancedAboutPreference
@@ -76,7 +77,9 @@ class SettingsActivity : Activity() {
             Utils.setContext(context)
             ReVancedAboutPreference(context).apply {
                 setTitle(R.string.about_title)
-                summary = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+                summary =
+                    """Version: ${BuildConfig.VERSION_NAME} (${BuildConfig.COMMIT_HASH}) ${BuildConfig.BUILD_TYPE} 
+                       |Build Date: ${DateUtils.getRelativeTimeSpanString(BuildConfig.COMMIT_DATE * 1000)}""".trimMargin()
                 rootScreen.addPreference(this)
             }
 
