@@ -106,7 +106,7 @@ val playerInitFingerprint = fingerprint {
  */
 val seekFingerprint = fingerprint {
     classMatcher { className(playerInitFingerprint(dexkit).className) }
-    strings("Attempting to seek during an ad")
+    strings("currentPositionMs.")
 }
 
 val seekSourceType = findClassDirect {
