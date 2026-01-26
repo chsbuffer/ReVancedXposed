@@ -5,7 +5,6 @@ import io.github.chsbuffer.revancedxposed.TargetApp
 import io.github.chsbuffer.revancedxposed.accessFlags
 import io.github.chsbuffer.revancedxposed.findClassDirect
 import io.github.chsbuffer.revancedxposed.fingerprint
-import io.github.chsbuffer.revancedxposed.parameters
 import io.github.chsbuffer.revancedxposed.returns
 import io.github.chsbuffer.revancedxposed.strings
 
@@ -14,8 +13,13 @@ internal val experimentalFeatureFlagParentFingerprint = findClassDirect {
         matcher {
             accessFlags(AccessFlags.STATIC)
             returns("L")
-            parameters("L", "J", "[B")
             strings("Unable to parse proto typed experiment flag: ")
+        }
+    }.filter { methodData ->
+        methodData.paramTypeNames.let {
+            // Early targets is: "L", "J", "[B"
+            // Later targets is: "L", "J"
+            (it.size == 2 || it.size == 3) && it[1] == "long"
         }
     }.map { it.declaredClass }.distinct().single()!!
 }
